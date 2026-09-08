@@ -1,0 +1,130 @@
+---
+import '../styles/global.css';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { ArrowRight, Check, Code, Copy, Pen } from 'reicon-react';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const codeIcon = renderToStaticMarkup(createElement(Code, { size: 15, weight: 'Outline' }));
+const copyIcon = renderToStaticMarkup(createElement(Copy, { size: 15, weight: 'Outline' }));
+const checkIcon = renderToStaticMarkup(createElement(Check, { size: 15, weight: 'Outline' }));
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f6f2" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23102935'/%3E%3Cpath d='M9 20c3 5 12 4 14-1 2-6-8-4-7-9 1-4 7-4 9-1' fill='none' stroke='%23f18b5f' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <title>{title} · SignetPad</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="/" aria-label="SignetPad home">
+          <span class="brand-mark" aria-hidden="true"><Pen size={16} /></span>
+          <span>signature<span class="brand-dot">.</span>pad</span>
+        </a>
+        <nav class="top-nav" aria-label="Main navigation">
+          <a href="/docs/getting-started">Docs</a>
+          <a href="/docs/examples">Examples</a>
+          <a href="/docs/integrations">Integrations</a>
+          <a href="/docs/api">API</a>
+        </nav>
+        <a class="header-cta" href="/docs/getting-started">
+          Get started <ArrowRight aria-hidden="true" size={16} weight="Outline" />
+        </a>
+      </div>
+    </header>
+    <main id="main-content"><slot /></main>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div>
+          <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true"><Pen size={16} /></span>
+            <span>signature<span class="brand-dot">.</span>pad</span>
+          </a>
+          <p>Portable vector signatures for web and native apps.</p>
+        </div>
+        <div class="footer-links">
+          <a href="/docs/getting-started">Documentation</a>
+          <a href="/docs/examples">Examples</a>
+          <a href="/docs/ai-agents">For AI agents</a>
+        </div>
+      </div>
+    </footer>
+    <script is:inline define:vars={{ codeIcon, copyIcon, checkIcon }}>
+      const languageLabels = {
+        bash: 'Terminal',
+        javascript: 'JavaScript',
+        jsx: 'React',
+        svelte: 'Svelte',
+        ts: 'TypeScript',
+        tsx: 'React',
+        vue: 'Vue',
+      };
+
+      const setCopyLabel = (button, icon, text) => {
+        button.innerHTML = icon + '<span>' + text + '</span>';
+      };
+
+      document.querySelectorAll('.docs-prose pre').forEach((pre) => {
+        if (pre.dataset.enhanced === 'true') return;
+
+        const code = pre.querySelector('code');
+        const languageClass = [...(code?.classList ?? [])].find((value) =>
+          value.startsWith('language-'),
+        );
+        const language = pre.dataset.language ?? languageClass?.replace('language-', '') ?? 'text';
+        const shell = document.createElement('div');
+        const toolbar = document.createElement('div');
+        const meta = document.createElement('span');
+        const label = document.createElement('span');
+        const copyButton = document.createElement('button');
+        const status = document.createElement('span');
+
+        shell.className = 'code-block';
+        toolbar.className = 'code-toolbar';
+        meta.className = 'code-meta';
+        label.className = 'code-language';
+        label.textContent = languageLabels[language] ?? language.toUpperCase();
+        meta.innerHTML = codeIcon;
+        meta.append(label);
+        copyButton.type = 'button';
+        copyButton.className = 'code-copy';
+        setCopyLabel(copyButton, copyIcon, 'Copy');
+        copyButton.setAttribute('aria-label', 'Copy code example');
+        status.className = 'code-status';
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+
+        copyButton.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(code?.textContent ?? '');
+            setCopyLabel(copyButton, checkIcon, 'Copied');
+            status.textContent = 'Code copied.';
+            window.setTimeout(() => {
+              setCopyLabel(copyButton, copyIcon, 'Copy');
+              status.textContent = '';
+            }, 1800);
+          } catch {
+            setCopyLabel(copyButton, copyIcon, 'Select code');
+            status.textContent = 'Copying failed. Select the code manually.';
+          }
+        });
+
+        pre.dataset.enhanced = 'true';
+        toolbar.append(meta, copyButton, status);
+        pre.parentNode?.insertBefore(shell, pre);
+        shell.append(toolbar, pre);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+{
+  "name": "@signetpad/vue",
+  "version": "0.1.0",
+  "description": "Headless Vue 3 bindings for @signetpad/core.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thevipinmishra/signetpad.git",
+    "directory": "packages/vue"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "vue": ">=3.3.0"
+  },
+  "dependencies": {
+    "@signetpad/core": "workspace:*"
+  },
+  "devDependencies": {
+    "vue": "^3.5.42"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\"",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

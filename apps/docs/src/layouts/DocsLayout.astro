@@ -1,0 +1,71 @@
+---
+import { getCollection } from 'astro:content';
+import { ArrowLeft, ArrowRight } from 'reicon-react';
+import { DocsMenu } from '../components/DocsMenu';
+import { InstallTabs } from '../components/InstallTabs';
+import SiteLayout from './SiteLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  slug: string;
+}
+
+const { title, description, slug } = Astro.props;
+const entries = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
+const currentIndex = entries.findIndex((entry) => entry.id === slug);
+const previousEntry = currentIndex > 0 ? entries[currentIndex - 1] : undefined;
+const nextEntry = currentIndex >= 0 ? entries[currentIndex + 1] : undefined;
+const menuEntries = entries.map((entry) => ({
+  id: entry.id,
+  title: entry.data.title,
+  section: entry.data.section,
+}));
+
+function entryHref(id: string): string {
+  return '/docs/' + id;
+}
+---
+<SiteLayout title={title} description={description}>
+  <div class="docs-frame">
+    <article class="docs-article">
+      <div class="docs-context">
+        <div class="docs-breadcrumb">
+          <a href="/">SignetPad</a>
+          <span aria-hidden="true">/</span>
+          <span>Docs</span>
+        </div>
+        <DocsMenu activeSlug={slug} entries={menuEntries} />
+      </div>
+      <header class="docs-article-header">
+        <h1>{title}</h1>
+        <p>{description}</p>
+      </header>
+
+      {slug === 'getting-started' && (
+        <div class="docs-install-panel">
+          <InstallTabs client:load />
+        </div>
+      )}
+
+      <div class="docs-prose"><slot /></div>
+
+      <nav class="docs-bottom-nav" aria-label="Documentation pagination">
+        {previousEntry ? (
+          <a href={entryHref(previousEntry.id)}>
+            <span><ArrowLeft aria-hidden="true" size={14} weight="Outline" />Previous</span>
+            <strong>{previousEntry.data.title}</strong>
+          </a>
+        ) : (
+          <span />
+        )}
+        {nextEntry && (
+          <a href={entryHref(nextEntry.id)}>
+            <span>Next<ArrowRight aria-hidden="true" size={14} weight="Outline" /></span>
+            <strong>{nextEntry.data.title}</strong>
+          </a>
+        )}
+      </nav>
+    </article>
+  </div>
+</SiteLayout>

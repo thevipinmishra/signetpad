@@ -1,0 +1,139 @@
+---
+import { InteractivePad } from '../components/InteractivePad';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { ArrowRight, Book, Code, Package } from 'reicon-react';
+---
+<SiteLayout
+  title="Signature input for web and native apps"
+  description="A type-safe, headless signature pad for React, React Native, Vue, Svelte, and the frameworks built on them."
+>
+  <section class="home-hero page-width">
+    <div class="hero-copy">
+      <p class="hero-kicker"><span class="hero-kicker-line"></span>Open source · TypeScript first</p>
+      <h1>Signatures that feel like <em>your product.</em></h1>
+      <p class="hero-lede">
+        Capture clean vector strokes, render them anywhere, and keep every framework integration
+        pleasantly small.
+      </p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="/docs/getting-started">
+          Read the docs <ArrowRight aria-hidden="true" size={16} weight="Outline" />
+        </a>
+        <a class="button button-secondary" href="/docs/examples">
+          Browse examples <ArrowRight aria-hidden="true" size={16} weight="Outline" />
+        </a>
+      </div>
+      <div class="hero-trust" aria-label="Library highlights">
+        <span>MIT licensed</span>
+        <span>Zero-dependency core</span>
+        <span>Web and native</span>
+      </div>
+    </div>
+
+    <div class="hero-demo">
+      <InteractivePad client:load />
+    </div>
+  </section>
+
+  <section class="proof-strip" aria-label="Library principles">
+    <div>
+      <span>01</span>
+      <strong>Store vectors</strong>
+      <p>Keep editable points, not a flattened screenshot.</p>
+    </div>
+    <div>
+      <span>02</span>
+      <strong>Choose your renderer</strong>
+      <p>Canvas and React Native SVG are ready. Other renderers read the same strokes.</p>
+    </div>
+    <div>
+      <span>03</span>
+      <strong>Own the experience</strong>
+      <p>Labels, controls, accessibility, and form behavior stay in your app.</p>
+    </div>
+  </section>
+
+  <section class="home-section page-width" aria-labelledby="why-title">
+    <div class="section-intro">
+      <div>
+        <h2 id="why-title">A small primitive with room for your product to breathe.</h2>
+      </div>
+      <p>
+        The controller handles strokes and history. The adapter handles input. The renderer handles
+        pixels. Each part stays replaceable, testable, and easy to explain.
+      </p>
+    </div>
+
+    <div class="feature-grid">
+      <article>
+        <span class="feature-icon" aria-hidden="true">
+          <Code size={20} weight="Outline" />
+        </span>
+        <h3>Portable core</h3>
+        <p>Pure TypeScript for validation, undo and redo, snapshots, and versioned data.</p>
+        <a href="/docs/api">Explore the core API <ArrowRight aria-hidden="true" size={15} weight="Outline" /></a>
+      </article>
+      <article>
+        <span class="feature-icon" aria-hidden="true">
+          <Package size={20} weight="Outline" />
+        </span>
+        <h3>Minimal adapters</h3>
+        <p>React, React Native, Vue, and Svelte each get the lightest integration that works.</p>
+        <a href="/docs/integrations">See the adapter matrix <ArrowRight aria-hidden="true" size={15} weight="Outline" /></a>
+      </article>
+      <article>
+        <span class="feature-icon" aria-hidden="true">
+          <Book size={20} weight="Outline" />
+        </span>
+        <h3>Friendly to tooling</h3>
+        <p>Predictable packages, direct examples, and a compact guide for code assistants.</p>
+        <a href="/docs/ai-agents">Read the agent guide <ArrowRight aria-hidden="true" size={15} weight="Outline" /></a>
+      </article>
+    </div>
+  </section>
+
+  <section class="home-section home-section-tinted" aria-labelledby="start-title">
+    <div class="page-width split-section">
+      <div>
+        <h2 id="start-title">Use the adapter your app already understands.</h2>
+      </div>
+      <div class="integration-list">
+        <a href="/docs/react">
+          <span>
+            <strong>React</strong>
+            <small>Vite, Remix, Next.js, and Astro islands</small>
+          </span>
+          <ArrowRight aria-hidden="true" size={17} weight="Outline" />
+        </a>
+        <a href="/docs/react-native">
+          <span>
+            <strong>React Native</strong>
+            <small>PanResponder with SVG, Skia, or your renderer</small>
+          </span>
+          <ArrowRight aria-hidden="true" size={17} weight="Outline" />
+        </a>
+        <a href="/docs/vue">
+          <span>
+            <strong>Vue 3</strong>
+            <small>Vue, Nuxt, and client-only SSR patterns</small>
+          </span>
+          <ArrowRight aria-hidden="true" size={17} weight="Outline" />
+        </a>
+        <a href="/docs/sveltekit">
+          <span>
+            <strong>SvelteKit</strong>
+            <small>An SSR-safe browser action for Svelte</small>
+          </span>
+          <ArrowRight aria-hidden="true" size={17} weight="Outline" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section page-width closing-section">
+    <h2>Start with a real signing flow, then make it yours.</h2>
+    <a class="button button-primary" href="/docs/examples">
+      View practical examples <ArrowRight aria-hidden="true" size={16} weight="Outline" />
+    </a>
+  </section>
+</SiteLayout>
