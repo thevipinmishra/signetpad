@@ -12,7 +12,3 @@ updates:
           - typescript
           - vitest
           - turbo
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: monthly
