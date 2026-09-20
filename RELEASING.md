@@ -9,8 +9,7 @@ SignetPad publishes as a single unscoped npm package: [`signetpad`](https://www.
 3. Publish once from a trusted machine or let the Release workflow publish:
 
    ```sh
-   pnpm --filter signetpad build
-   pnpm changeset publish
+   pnpm run publish
    ```
 
 GitHub Actions can publish later releases with provenance when `NPM_TOKEN` is present. The
