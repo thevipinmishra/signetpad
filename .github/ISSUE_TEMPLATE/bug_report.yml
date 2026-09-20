@@ -6,17 +6,17 @@ body:
     attributes:
       value: Thanks for taking the time to report a bug. Security issues belong in a private advisory.
   - type: dropdown
-    id: package
+    id: entry
     attributes:
-      label: Package
+      label: Import path
       options:
-        - '@signetpad/core'
-        - '@signetpad/react'
-        - '@signetpad/react-native'
-        - '@signetpad/vue'
-        - '@signetpad/svelte'
-        - '@signetpad/renderer-canvas'
-        - '@signetpad/renderer-react-native-svg'
+        - signetpad
+        - signetpad/react
+        - signetpad/vue
+        - signetpad/svelte
+        - signetpad/react-native
+        - signetpad/canvas
+        - signetpad/react-native-svg
         - docs or examples
         - unsure
     validations:

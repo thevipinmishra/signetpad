@@ -1,6 +1,6 @@
 ---
-title: API reference
-description: The small, stable controller contract shared by every adapter.
+title: SignetPad API reference
+description: Controller methods, SignatureData, snapshots, and options for the SignetPad TypeScript signature pad.
 section: reference
 order: 40
 ---
@@ -68,4 +68,4 @@ Framework adapters accept the same options plus `enabled` and, on web, `preventD
 
 The default viewport is `600 × 240`, the stroke is a `2px` round dark line, smoothing is `0.35`, and tap dots are kept. Pass only the values you want to change; the types stay narrowed all the way through.
 
-Published packages are ESM-only. Node-based tooling needs Node.js 18.17 or newer.
+SignetPad is ESM-only. Import from `signetpad` for the controller and from a dedicated subpath for adapters and renderers. Node-based tooling needs Node.js 18.17 or newer.

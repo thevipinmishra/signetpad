@@ -1,6 +1,6 @@
 ---
-title: Patterns and examples
-description: Production-minded patterns for capture, persistence, appearance, and review.
+title: SignetPad examples
+description: Production patterns for a SignetPad checkout signature field, drafts, typed fallbacks, and image export.
 section: start
 order: 20
 ---

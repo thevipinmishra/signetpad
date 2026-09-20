@@ -1,6 +1,6 @@
 # Contributing to SignetPad
 
-Thanks for helping keep this toolkit small, typed, and portable.
+Thanks for helping keep SignetPad small, typed, and portable.
 
 ## Local setup
 
@@ -20,20 +20,24 @@ pnpm --filter @signetpad/docs dev
 pnpm --filter @signetpad/examples dev
 ```
 
-## How the packages fit together
+## How the package fits together
 
-1. `@signetpad/core` owns stroke state, history, validation, and serialization.
-2. Framework packages only translate host input into `begin` / `move` / `end`.
-3. Renderers only draw `SignatureStroke[]`. They must not capture input.
+`packages/signetpad` is the only published package. Dedicated import paths keep unused code out of
+app bundles:
 
-Keep new features on the smallest layer that can own them. Do not add a Next.js or Nuxt
-package unless the base React or Vue adapter cannot express the integration.
+1. `signetpad` owns stroke state, history, validation, and serialization.
+2. `signetpad/react`, `signetpad/vue`, `signetpad/svelte`, and `signetpad/react-native` only
+   translate host input into `begin` / `move` / `end`.
+3. `signetpad/canvas` and `signetpad/react-native-svg` only draw `SignatureStroke[]`.
+
+Keep new features on the smallest entry that can own them. Do not add a Next.js or Nuxt
+import path unless the base React or Vue adapter cannot express the integration.
 
 ## Pull requests
 
 - Keep the public controller contract stable unless the change is intentional and documented.
 - Add or update tests next to the code you change.
-- Update package READMEs or `apps/docs` when the public API or an integration pattern changes.
+- Update the README or `apps/docs` when the public API or an integration pattern changes.
 - Run `pnpm check` before you push.
 - Use [changesets](https://github.com/changesets/changesets) for user-facing package changes:
 
@@ -46,12 +50,12 @@ Internal apps (`@signetpad/docs`, `@signetpad/examples`) do not need a changeset
 ## Code style
 
 Prettier is the formatter. TypeScript is the linter: `strict`, `noUncheckedIndexedAccess`, and
-`exactOptionalPropertyTypes` are on. Prefer small, dependency-free modules in `packages/core`.
+`exactOptionalPropertyTypes` are on. Prefer small, dependency-free modules in the SignetPad core.
 
 ## Releases
 
-Maintainers follow [RELEASING.md](./RELEASING.md). First-time npm publishing also needs the
-`@signetpad` npm org and an `NPM_TOKEN` repository secret.
+Maintainers follow [RELEASING.md](./RELEASING.md). Publishing needs an `NPM_TOKEN` repository
+secret. There is no npm organization; the package name is `signetpad`.
 
 ## Reporting issues
 

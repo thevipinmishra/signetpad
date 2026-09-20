@@ -3,7 +3,6 @@ import react from '@astrojs/react';
 
 export default defineConfig({
   integrations: [react()],
-  site: 'https://signetpad.dev',
   markdown: {
     shikiConfig: { theme: 'github-dark' },
   },

@@ -1,8 +1,8 @@
 {
-  "name": "signetpad",
+  "name": "signetpad-workspace",
   "private": true,
   "version": "0.0.0",
-  "description": "A headless, cross-platform signature capture toolkit.",
+  "description": "SignetPad workspace — headless TypeScript signature pad for web and native apps.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thevipinmishra/signetpad.git"

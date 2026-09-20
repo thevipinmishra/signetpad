@@ -1,6 +1,6 @@
 ---
-title: React Native
-description: Capture touch and stylus input with PanResponder and render the same strokes anywhere.
+title: React Native signature pad
+description: Capture touch and stylus signatures in React Native with SignetPad and render the same vector strokes as SVG.
 section: integrations
 order: 33
 ---
@@ -8,8 +8,12 @@ order: 33
 ## Install
 
 ```bash
-npm install @signetpad/core @signetpad/react-native
-npm install react-native-svg @signetpad/renderer-react-native-svg
+npm install signetpad react-native-svg
+```
+
+```ts
+import { useSignaturePad } from 'signetpad/react-native';
+import { SignatureSvg } from 'signetpad/react-native-svg';
 ```
 
 ## Connect the responder

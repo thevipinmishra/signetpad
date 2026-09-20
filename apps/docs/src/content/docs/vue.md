@@ -1,6 +1,6 @@
 ---
-title: Vue
-description: Use the Vue 3 composable in Vue, Nuxt, and other Vue-based applications.
+title: Vue signature pad
+description: Use the SignetPad Vue 3 composable to capture vector signatures in Vue and Nuxt.
 section: integrations
 order: 34
 ---
@@ -8,14 +8,19 @@ order: 34
 ## Install
 
 ```bash
-pnpm add @signetpad/vue @signetpad/renderer-canvas
+pnpm add signetpad
+```
+
+```ts
+import { useSignaturePad } from 'signetpad/vue';
+import { createCanvasRenderer } from 'signetpad/canvas';
 ```
 
 ## Bind the surface
 
 ```vue
 <script setup lang="ts">
-import { useSignaturePad } from '@signetpad/vue';
+import { useSignaturePad } from 'signetpad/vue';
 const { controller, snapshot, surfaceProps } = useSignaturePad({
   viewport: { width: 600, height: 240 },
 });

@@ -4,5 +4,5 @@ contact_links:
     url: https://github.com/thevipinmishra/signetpad/security/advisories/new
     about: Please do not file public issues for vulnerabilities.
   - name: Documentation
-    url: https://signetpad.dev
+    url: https://github.com/thevipinmishra/signetpad/tree/main/apps/docs/src/content/docs
     about: Integration guides and API reference.

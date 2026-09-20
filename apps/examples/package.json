@@ -11,9 +11,7 @@
   "dependencies": {
     "@fontsource-variable/manrope": "^5.3.0",
     "@fontsource-variable/newsreader": "^5.3.0",
-    "@signetpad/core": "workspace:*",
-    "@signetpad/react": "workspace:*",
-    "@signetpad/renderer-canvas": "workspace:*",
+    "signetpad": "workspace:*",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "reicon-react": "^1.2.5"

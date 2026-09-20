@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-The latest published `0.x` release line of `@signetpad/*` receives security fixes.
+The latest published `0.x` release line of `signetpad` receives security fixes.
 
 ## Reporting a vulnerability
 
