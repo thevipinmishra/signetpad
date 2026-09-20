@@ -1,19 +1,26 @@
 ---
-title: Next.js
-description: Use the React adapter inside a small client component boundary.
+title: Next.js signature pad
+description: Use SignetPad inside a Next.js client component to capture signatures without running the pad on the server.
 section: integrations
 order: 32
 ---
 
-Next.js does not need a second signature-specific adapter. Keep the server-rendered page clean and move only the interactive field behind a client boundary.
+Next.js does not need a second signature-specific adapter. Keep the server-rendered page clean and move only the interactive SignetPad field behind a client boundary.
 
 ```tsx
 'use client';
-import { useSignaturePad } from '@signetpad/react';
+import { useSignaturePad } from 'signetpad/react';
 
 export function SignatureField() {
   const { surfaceRef, surfaceProps } = useSignaturePad({ viewport: { width: 600, height: 240 } });
-  return <canvas ref={surfaceRef} {...surfaceProps} aria-label="Signature input" />;
+  return (
+    <canvas
+      ref={surfaceRef}
+      style={{ touchAction: 'none' }}
+      {...surfaceProps}
+      aria-label="Signature input"
+    />
+  );
 }
 ```
 

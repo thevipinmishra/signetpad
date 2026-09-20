@@ -10,6 +10,18 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+const structuredData = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'SignetPad',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Web, iOS, Android',
+  license: 'https://github.com/thevipinmishra/signetpad/blob/main/LICENSE',
+  url: 'https://github.com/thevipinmishra/signetpad',
+  downloadUrl: 'https://www.npmjs.com/package/signetpad',
+  description,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+});
 const codeIcon = renderToStaticMarkup(createElement(Code, { size: 15, weight: 'Outline' }));
 const copyIcon = renderToStaticMarkup(createElement(Copy, { size: 15, weight: 'Outline' }));
 const checkIcon = renderToStaticMarkup(createElement(Check, { size: 15, weight: 'Outline' }));
@@ -20,9 +32,23 @@ const checkIcon = renderToStaticMarkup(createElement(Check, { size: 15, weight: 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    <meta
+      name="keywords"
+      content="SignetPad, signature pad, react signature pad, vue signature pad, svelte signature pad, react native signature, canvas signature, svg signature, digital signature, typescript"
+    />
+    <meta name="author" content="SignetPad" />
+    <meta name="robots" content="index,follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SignetPad" />
+    <meta property="og:title" content={`${title} · SignetPad`} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={`${title} · SignetPad`} />
+    <meta name="twitter:description" content={description} />
     <meta name="theme-color" content="#f7f6f2" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23102935'/%3E%3Cpath d='M9 20c3 5 12 4 14-1 2-6-8-4-7-9 1-4 7-4 9-1' fill='none' stroke='%23f18b5f' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E" />
     <title>{title} · SignetPad</title>
+    <script is:inline type="application/ld+json" set:html={structuredData} />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
@@ -30,13 +56,14 @@ const checkIcon = renderToStaticMarkup(createElement(Check, { size: 15, weight: 
       <div class="header-inner">
         <a class="brand" href="/" aria-label="SignetPad home">
           <span class="brand-mark" aria-hidden="true"><Pen size={16} /></span>
-          <span>signature<span class="brand-dot">.</span>pad</span>
+          <span>SignetPad</span>
         </a>
         <nav class="top-nav" aria-label="Main navigation">
           <a href="/docs/getting-started">Docs</a>
           <a href="/docs/examples">Examples</a>
           <a href="/docs/integrations">Integrations</a>
           <a href="/docs/api">API</a>
+          <a href="https://github.com/thevipinmishra/signetpad">GitHub</a>
         </nav>
         <a class="header-cta" href="/docs/getting-started">
           Get started <ArrowRight aria-hidden="true" size={16} weight="Outline" />
@@ -49,7 +76,7 @@ const checkIcon = renderToStaticMarkup(createElement(Check, { size: 15, weight: 
         <div>
           <a class="brand" href="/">
             <span class="brand-mark" aria-hidden="true"><Pen size={16} /></span>
-            <span>signature<span class="brand-dot">.</span>pad</span>
+            <span>SignetPad</span>
           </a>
           <p>Portable vector signatures for web and native apps.</p>
         </div>
@@ -57,6 +84,7 @@ const checkIcon = renderToStaticMarkup(createElement(Check, { size: 15, weight: 
           <a href="/docs/getting-started">Documentation</a>
           <a href="/docs/examples">Examples</a>
           <a href="/docs/ai-agents">For AI agents</a>
+          <a href="https://github.com/thevipinmishra/signetpad">GitHub</a>
         </div>
       </div>
     </footer>

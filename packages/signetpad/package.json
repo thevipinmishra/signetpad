@@ -1,0 +1,132 @@
+{
+  "name": "signetpad",
+  "version": "0.1.0",
+  "description": "SignetPad is a headless TypeScript signature pad for React, Vue, Svelte, and React Native. Capture vector signatures, undo strokes, and export SVG, PNG, JPEG, or WebP.",
+  "author": {
+    "name": "Vipin Mishra",
+    "email": "thevipinmishra@gmail.com",
+    "url": "https://github.com/thevipinmishra"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thevipinmishra/signetpad.git",
+    "directory": "packages/signetpad"
+  },
+  "bugs": {
+    "url": "https://github.com/thevipinmishra/signetpad/issues"
+  },
+  "homepage": "https://github.com/thevipinmishra/signetpad#readme",
+  "keywords": [
+    "signetpad",
+    "signature",
+    "signature-pad",
+    "signature pad",
+    "digital signature",
+    "handwritten signature",
+    "vector signature",
+    "canvas signature",
+    "svg signature",
+    "react signature pad",
+    "vue signature pad",
+    "svelte signature pad",
+    "react native signature",
+    "nextjs",
+    "nuxt",
+    "sveltekit",
+    "headless",
+    "typescript",
+    "undo-redo"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js",
+      "default": "./dist/react/index.js"
+    },
+    "./vue": {
+      "types": "./dist/vue/index.d.ts",
+      "import": "./dist/vue/index.js",
+      "default": "./dist/vue/index.js"
+    },
+    "./svelte": {
+      "types": "./dist/svelte/index.d.ts",
+      "import": "./dist/svelte/index.js",
+      "default": "./dist/svelte/index.js"
+    },
+    "./react-native": {
+      "types": "./dist/react-native/index.d.ts",
+      "react-native": "./dist/react-native/index.js",
+      "import": "./dist/react-native/index.js",
+      "default": "./dist/react-native/index.js"
+    },
+    "./canvas": {
+      "types": "./dist/canvas/index.d.ts",
+      "import": "./dist/canvas/index.js",
+      "default": "./dist/canvas/index.js"
+    },
+    "./react-native-svg": {
+      "types": "./dist/react-native-svg/index.d.ts",
+      "react-native": "./dist/react-native-svg/index.js",
+      "import": "./dist/react-native-svg/index.js",
+      "default": "./dist/react-native-svg/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.72.0",
+    "react-native-svg": ">=14.0.0",
+    "vue": ">=3.3.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-svg": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "esbuild": "^0.25.12",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-native": "^0.87.1",
+    "react-native-svg": "^15.15.5",
+    "vue": "^3.5.42"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

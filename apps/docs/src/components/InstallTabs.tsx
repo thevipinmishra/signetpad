@@ -2,10 +2,10 @@ import { useId, useRef, useState, type KeyboardEvent } from 'react';
 import { Check, Code, Copy, Package } from 'reicon-react';
 
 const INSTALL_COMMANDS = {
-  pnpm: 'pnpm add @signetpad/core @signetpad/react @signetpad/renderer-canvas',
-  npm: 'npm install @signetpad/core @signetpad/react @signetpad/renderer-canvas',
-  yarn: 'yarn add @signetpad/core @signetpad/react @signetpad/renderer-canvas',
-  bun: 'bun add @signetpad/core @signetpad/react @signetpad/renderer-canvas',
+  pnpm: 'pnpm add signetpad',
+  npm: 'npm install signetpad',
+  yarn: 'yarn add signetpad',
+  bun: 'bun add signetpad',
 } as const;
 
 type PackageManager = keyof typeof INSTALL_COMMANDS;
@@ -59,7 +59,7 @@ export function InstallTabs() {
         <div>
           <h2>
             <Package aria-hidden="true" size={17} weight="Outline" />
-            Install for React
+            Install SignetPad
           </h2>
           <p>Choose your package manager, then copy one command.</p>
         </div>

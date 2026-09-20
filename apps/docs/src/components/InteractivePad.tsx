@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Pen, Redo, Trash, Undo } from 'reicon-react';
-import { useSignaturePad } from '@signetpad/react';
-import { createCanvasRenderer, type CanvasRenderer } from '@signetpad/renderer-canvas';
+import { useSignaturePad } from 'signetpad/react';
+import { createCanvasRenderer, type CanvasRenderer } from 'signetpad/canvas';
 
 const VIEWPORT = { width: 720, height: 280 };
 
@@ -49,7 +49,7 @@ export function InteractivePad() {
           <Pen aria-hidden="true" size={15} weight="Outline" />
           Live example
         </span>
-        <code>@signetpad/react</code>
+        <code>signetpad/react</code>
       </div>
       <p className="demo-label" id="demo-help">
         Draw with a mouse, touch, or stylus. Your strokes remain editable vector data.

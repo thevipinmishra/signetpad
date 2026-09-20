@@ -24,9 +24,7 @@ describe('InstallTabs', () => {
     const bun = screen.getByRole('tab', { name: 'bun' });
     expect(bun.getAttribute('aria-selected')).toBe('true');
     expect(document.activeElement).toBe(bun);
-    expect(screen.getByRole('tabpanel').textContent).toContain(
-      'bun add @signetpad/core @signetpad/react @signetpad/renderer-canvas',
-    );
+    expect(screen.getByRole('tabpanel').textContent).toContain('bun add signetpad');
   });
 
   it('copies the selected command and announces the result', async () => {
@@ -35,9 +33,7 @@ describe('InstallTabs', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
 
     await waitFor(() => {
-      expect(writeText).toHaveBeenCalledWith(
-        'npm install @signetpad/core @signetpad/react @signetpad/renderer-canvas',
-      );
+      expect(writeText).toHaveBeenCalledWith('npm install signetpad');
     });
     expect(screen.getByRole('status').textContent).toContain('npm command copied.');
     expect(screen.getByRole('button', { name: 'Copied' })).toBeTruthy();

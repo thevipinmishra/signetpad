@@ -1,6 +1,6 @@
 ---
-title: SvelteKit
-description: Mount one small browser action while keeping the rest of the page SSR-friendly.
+title: Svelte and SvelteKit signature pad
+description: Attach the SignetPad Svelte action to capture signatures in Svelte and SvelteKit without breaking SSR.
 section: integrations
 order: 35
 ---
@@ -8,18 +8,22 @@ order: 35
 ## Install
 
 ```bash
-pnpm add @signetpad/svelte
+pnpm add signetpad
+```
+
+```ts
+import { createSignaturePadAction } from 'signetpad/svelte';
 ```
 
 ## Use the action
 
 ```svelte
 <script lang="ts">
-  import { createSignaturePadAction } from '@signetpad/svelte';
+  import { createSignaturePadAction } from 'signetpad/svelte';
   const { action: signaturePadAction, controller } = createSignaturePadAction({ viewport: { width: 600, height: 240 } });
 </script>
 
-<canvas use:signaturePadAction aria-label="Signature input" />
+<canvas use:signaturePadAction style="touch-action: none" aria-label="Signature input" />
 <button type="button" on:click={() => controller.clear()}>Clear</button>
 ```
 

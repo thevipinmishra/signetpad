@@ -1,31 +1,30 @@
 ---
-title: Getting started
-description: Install the core and connect a signature surface in a few minutes.
+title: Getting started with SignetPad
+description: Install the SignetPad signature pad and connect a React, Vue, Svelte, or React Native surface in a few minutes.
 section: start
 order: 10
 ---
 
+SignetPad is a headless signature pad. One npm package, `signetpad`, exposes dedicated import paths for the controller, each framework adapter, and each renderer.
+
 ## The mental model
 
-SignetPad is three small layers:
+1. **`signetpad`** records validated vector points, history, and versioned data.
+2. **Adapters** (`signetpad/react`, `signetpad/vue`, `signetpad/svelte`, `signetpad/react-native`) translate host input into core points.
+3. **Renderers** (`signetpad/canvas`, `signetpad/react-native-svg`) draw the current strokes.
 
-1. **Core** records validated vector points, history, and versioned data.
-2. **Adapters** translate browser or native input into core points.
-3. **Renderers** draw the current strokes wherever your app needs them.
+That split means you can swap Canvas for SVG, use the same saved data on a server, or bring your own renderer without rewriting input handling.
 
-That separation means you can swap Canvas for SVG, use the same saved data on a server, or bring your own renderer without rewriting input handling.
+## Install SignetPad
 
-## Install the pieces
+Pick a package manager in the install panel above. One command installs the whole library. Import only the paths you use so unused adapters are tree-shaken out. For other stacks, see the [integration matrix](/docs/integrations).
 
-Pick a package manager in the install panel above. That command sets up the core, the React input
-adapter, and the Canvas renderer. For other stacks, use the [integration matrix](/docs/integrations).
-
-## Create your first pad
+## Create a React signature pad
 
 ```tsx
 import { useLayoutEffect, useRef } from 'react';
-import { useSignaturePad } from '@signetpad/react';
-import { createCanvasRenderer } from '@signetpad/renderer-canvas';
+import { useSignaturePad } from 'signetpad/react';
+import { createCanvasRenderer } from 'signetpad/canvas';
 
 const viewport = { width: 600, height: 240 };
 
@@ -37,6 +36,7 @@ export function SignatureField() {
     const context = canvasRef.current?.getContext('2d');
     if (!context) return;
     const renderer = createCanvasRenderer(context, { viewport, dpr: devicePixelRatio });
+    renderer.render(controller.getStrokes());
     return controller.subscribe(() => renderer.update(controller.getStrokes()), { events: 'all' });
   }, [controller]);
 
@@ -46,6 +46,7 @@ export function SignatureField() {
         canvasRef.current = node;
         surfaceRef(node);
       }}
+      style={{ touchAction: 'none' }}
       {...surfaceProps}
       aria-label="Signature input"
     />
@@ -54,7 +55,8 @@ export function SignatureField() {
 ```
 
 `surfaceProps` handles pointer input only. Add the label, instructions, focus treatment,
-undo/redo controls, and typed fallback that belong in your product.
+undo/redo controls, and typed fallback that belong in your product. Set `touch-action: none`
+on the drawing surface so mobile browsers do not scroll while someone is signing.
 
 ## Save and restore
 
