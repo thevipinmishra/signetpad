@@ -478,7 +478,7 @@ samp,
 }
 
 .proof-strip p {
-  max-width: 28ch;
+  max-width: 36ch;
   margin: 0.52rem 0 0;
   color: var(--color-ink-soft);
   font-size: 0.77rem;
