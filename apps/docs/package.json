@@ -15,13 +15,13 @@
     "@fontsource-variable/newsreader": "^5.3.0",
     "signetpad": "workspace:*",
     "astro": "^7.3.1",
-    "react": "^19.2.8",
+    "react": "^19.3.0",
     "react-dom": "^19.2.8",
     "reicon-react": "^1.2.5"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@types/react": "^19.2.18",
+    "@types/react": "^19.3.0",
     "@types/react-dom": "^19.2.7",
     "typescript": "^6.0.3"
   }
