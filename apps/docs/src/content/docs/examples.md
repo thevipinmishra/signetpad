@@ -1,19 +1,13 @@
 ---
-title: SignetPad examples
-description: Complete, copy-pasteable patterns for forms, drafts, stroke style, review copies, and exports.
+title: Examples
+description: Forms, drafts, stroke style, and more than one signer.
 section: start
 order: 20
 ---
 
-import { LivePreview } from '../../components/LivePreview.tsx';
+## Form field
 
-Each example below is a full React module. Nothing is implied from an earlier snippet.
-
-## Checkout signature field
-
-Accept a drawn signature or a typed name. Form rules stay in your component.
-
-<LivePreview client:load example="form" />
+Accept a drawn signature or a typed name.
 
 ```tsx
 import { useRef, useState, type FormEvent } from 'react';
@@ -22,25 +16,25 @@ import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
 export function AgreementForm() {
   const padRef = useRef<SignaturePadHandle>(null);
   const [typedName, setTypedName] = useState('');
-  const [status, setStatus] = useState('Draw a signature or type a name.');
+  const [status, setStatus] = useState('');
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const empty = padRef.current?.snapshot.isEmpty ?? true;
     if (empty && !typedName.trim()) {
-      setStatus('Draw a signature or enter the signatory name.');
+      setStatus('Draw a signature or enter a name.');
       return;
     }
 
     const signature = empty ? null : padRef.current?.toData();
-    setStatus(signature ? 'Signature is ready to submit.' : 'Typed name is ready to submit.');
+    setStatus(signature ? 'Signature ready.' : 'Typed name ready.');
   }
 
   return (
     <form onSubmit={onSubmit}>
-      <SignaturePad ref={padRef} aria-label="Agreement signature" />
+      <SignaturePad ref={padRef} aria-label="Signature" />
       <label>
-        Type the signatory name instead
+        Type a name instead
         <input
           type="text"
           autoComplete="name"
@@ -48,71 +42,56 @@ export function AgreementForm() {
           onChange={(event) => setTypedName(event.target.value)}
         />
       </label>
-      <button type="submit">Prepare signature</button>
+      <button type="submit">Submit</button>
       <p role="status">{status}</p>
     </form>
   );
 }
 ```
 
-## Save a draft, then restore it
+## Save and restore
 
-Persist versioned vector data, not a canvas screenshot. The same payload can render at another size later.
-
-<LivePreview client:load example="persist" />
+Store `toData()` as JSON. That payload can be loaded later at any size.
 
 ```tsx
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
 import type { SignatureData } from 'signetpad';
 
-const storageKey = 'checkout-signature';
+const storageKey = 'signature';
 
 export function DraftField() {
   const padRef = useRef<SignaturePadHandle>(null);
-  const [status, setStatus] = useState('Draw something, then save a draft.');
 
-  function saveDraft() {
+  function save() {
     const data = padRef.current?.toData();
-    if (!data || data.strokes.length === 0) {
-      setStatus('Nothing to save yet.');
-      return;
-    }
+    if (!data || data.strokes.length === 0) return;
     localStorage.setItem(storageKey, JSON.stringify(data));
-    setStatus('Draft saved.');
   }
 
-  function restoreDraft() {
-    const value = localStorage.getItem(storageKey);
-    if (!value) {
-      setStatus('No draft to restore.');
-      return;
-    }
-    const data = JSON.parse(value) as SignatureData;
-    padRef.current?.loadData(data);
-    setStatus('Draft restored.');
+  function restore() {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return;
+    padRef.current?.loadData(JSON.parse(raw) as SignatureData);
   }
 
   return (
     <div>
       <SignaturePad ref={padRef} aria-label="Signature draft" />
-      <button type="button" onClick={saveDraft}>
-        Save draft
+      <button type="button" onClick={save}>
+        Save
       </button>
-      <button type="button" onClick={restoreDraft}>
-        Restore draft
+      <button type="button" onClick={restore}>
+        Restore
       </button>
-      <p role="status">{status}</p>
     </div>
   );
 }
 ```
 
-## Customize future strokes
+## Stroke color and width
 
-Style changes do not mutate strokes that were already drawn.
-
-<LivePreview client:load example="stroke" />
+Style props apply to the next stroke. Existing strokes stay as they were drawn.
 
 ```tsx
 import { useState } from 'react';
@@ -124,7 +103,7 @@ export function StyledField() {
 
   return (
     <div>
-      <SignaturePad aria-label="Styled signature" stroke={{ color, width }} />
+      <SignaturePad aria-label="Signature" stroke={{ color, width }} />
       <input type="color" value={color} onChange={(event) => setColor(event.target.value)} />
       <input
         type="range"
@@ -139,11 +118,9 @@ export function StyledField() {
 }
 ```
 
-## Review-only copy
+## Read-only copy
 
-Load saved data and turn input off. The same `SignatureData` can drive a receipt, a review screen, or a PDF later.
-
-<LivePreview client:load example="readonly" />
+Load saved data and turn drawing off.
 
 ```tsx
 import { useEffect, useRef } from 'react';
@@ -161,9 +138,9 @@ export function ReviewSignature({ saved }: { saved: SignatureData }) {
 }
 ```
 
-## Multi-signer forms
+## Two signers
 
-Create one pad per signer. Do not share a handle between two fields — each signature needs its own history.
+Use one pad per person. Do not share a ref — each field needs its own history.
 
 ```tsx
 import { useRef } from 'react';
@@ -185,7 +162,7 @@ export function DualSignature() {
       <SignaturePad ref={customerRef} aria-label="Customer signature" />
       <SignaturePad ref={witnessRef} aria-label="Witness signature" />
       <button type="button" onClick={() => console.log(collect())}>
-        Collect signatures
+        Collect
       </button>
     </div>
   );

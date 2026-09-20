@@ -21,7 +21,7 @@ export function InteractivePad() {
   const [strokeColor, setStrokeColor] = useState<string>(STROKE_COLORS[0]);
   const [strokeWidth, setStrokeWidth] = useState(3);
   const [snapshot, setSnapshot] = useState(EMPTY_SNAPSHOT);
-  const [message, setMessage] = useState('Ready when you are.');
+  const [message, setMessage] = useState('No signature yet.');
 
   return (
     <div className="pad-widget">
