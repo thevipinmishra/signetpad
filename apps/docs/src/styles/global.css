@@ -454,17 +454,16 @@ button:disabled {
   transition: opacity 120ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-@media (hover: hover) {
-  .pad-icon-button:hover:not(:disabled) {
-    color: var(--color-ink);
-    background: var(--color-surface-muted);
-  }
+.pad-icon-button:hover:not(:disabled),
+.pad-icon-button:focus-visible {
+  color: var(--color-ink);
+  background: var(--color-surface-muted);
+}
 
-  .pad-tooltip[data-tooltip]:hover::after,
-  .pad-tooltip[data-tooltip]:focus-within::after {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+.pad-tooltip[data-tooltip]:hover::after,
+.pad-tooltip[data-tooltip]:focus-within::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 code,
