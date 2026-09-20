@@ -454,20 +454,26 @@ samp,
 }
 
 .proof-strip {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
   border-block: 1px solid var(--color-border);
-  background: var(--color-border);
-}
-
-.proof-strip > div {
-  padding: 2.1rem max(1.5rem, calc((100vw - 72.5rem) / 2));
   background: var(--color-surface);
 }
 
-.proof-strip > div + div {
+.proof-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.proof-strip-grid > div {
+  padding-block: 2.1rem;
+}
+
+.proof-strip-grid > div:not(:last-child) {
+  padding-inline-end: 2rem;
+}
+
+.proof-strip-grid > div + div {
   padding-inline-start: 2rem;
+  border-inline-start: 1px solid var(--color-border);
 }
 
 .proof-strip strong {
@@ -478,7 +484,6 @@ samp,
 }
 
 .proof-strip p {
-  max-width: 36ch;
   margin: 0.52rem 0 0;
   color: var(--color-ink-soft);
   font-size: 0.77rem;
@@ -1211,18 +1216,19 @@ samp,
     font-size: clamp(1.9rem, 8vw, 2.6rem);
   }
 
-  .proof-strip,
+  .proof-strip-grid,
   .feature-grid {
     grid-template-columns: 1fr;
   }
 
-  .proof-strip > div,
-  .proof-strip > div + div {
-    padding: 1.5rem 1rem;
+  .proof-strip-grid > div,
+  .proof-strip-grid > div + div {
+    padding: 1.5rem 0;
+    border-inline-start: 0;
   }
 
-  .proof-strip p {
-    max-width: 42ch;
+  .proof-strip-grid > div + div {
+    border-block-start: 1px solid var(--color-border);
   }
 
   .home-section {
