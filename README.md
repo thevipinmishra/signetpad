@@ -70,10 +70,11 @@ See [`packages/signetpad/README.md`](./packages/signetpad/README.md) for Vue, Sv
 
 ## Documentation
 
-- [Getting started](./apps/docs/src/content/docs/getting-started.mdx)
-- [Examples](./apps/docs/src/content/docs/examples.mdx)
-- [API](./apps/docs/src/content/docs/api.mdx)
-- [Integrations](./apps/docs/src/content/docs/integrations.mdx)
+- [Getting started](./apps/docs/src/content/docs/getting-started.md)
+- [Examples](./apps/docs/src/content/docs/examples.md)
+- [API](./apps/docs/src/content/docs/api.md)
+- [Integrations](./apps/docs/src/content/docs/integrations.md)
+- [llm.txt](./apps/docs/public/llm.txt)
 
 Run the docs site locally with `pnpm --filter @signetpad/docs dev`.
 

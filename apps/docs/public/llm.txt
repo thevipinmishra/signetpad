@@ -1,0 +1,257 @@
+# SignetPad
+
+Headless TypeScript signature pad. One npm package: `signetpad`.
+
+Human docs: /docs/getting-started
+This file is the API for AI agents.
+
+## Install
+
+```sh
+pnpm add signetpad
+```
+
+```sh
+npm install signetpad
+```
+
+## Imports
+
+| Import                       | Use |
+| ---------------------------- | --- |
+| `signetpad`                  | Controller, types, `toData()`, `toSvg()` |
+| `signetpad/react`            | React `SignaturePad` + `useSignaturePad` |
+| `signetpad/vue`              | Vue `SignaturePad` + `useSignaturePad` |
+| `signetpad/svelte`           | `createSignaturePadAction()` |
+| `signetpad/react-native`     | React Native `useSignaturePad` (PanResponder) |
+| `signetpad/react-native-svg` | Native `SignaturePad` + `SignatureSvg` |
+| `signetpad/canvas`           | Canvas 2D renderer (used by web `SignaturePad`) |
+
+There is no Next.js or Nuxt import. Use the React or Vue field in a client boundary.
+
+Prefer `SignaturePad` (or the Svelte canvas action). Use `useSignaturePad` only for a custom surface.
+
+## React
+
+```tsx
+import { SignaturePad } from 'signetpad/react';
+
+export function SignatureField() {
+  return <SignaturePad aria-label="Signature" />;
+}
+```
+
+```tsx
+import { useRef, useState } from 'react';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
+import type { SignatureSnapshot } from 'signetpad';
+
+export function SignatureField() {
+  const padRef = useRef<SignaturePadHandle>(null);
+  const [snapshot, setSnapshot] = useState<SignatureSnapshot | null>(null);
+
+  return (
+    <div>
+      <SignaturePad ref={padRef} aria-label="Signature" onSnapshot={setSnapshot} />
+      <button type="button" onClick={() => padRef.current?.undo()} disabled={!snapshot?.canUndo}>
+        Undo
+      </button>
+      <button type="button" onClick={() => padRef.current?.clear()} disabled={snapshot?.isEmpty}>
+        Clear
+      </button>
+    </div>
+  );
+}
+```
+
+## Next.js
+
+```tsx
+'use client';
+
+import { SignaturePad } from 'signetpad/react';
+
+export function SignatureField() {
+  return <SignaturePad aria-label="Signature" />;
+}
+```
+
+## Vue
+
+```vue
+<script setup lang="ts">
+import { SignaturePad } from 'signetpad/vue';
+</script>
+
+<template>
+  <SignaturePad aria-label="Signature" />
+</template>
+```
+
+In Nuxt, wrap with `<ClientOnly>`.
+
+## Svelte
+
+```svelte
+<script lang="ts">
+  import { createSignaturePadAction } from 'signetpad/svelte';
+
+  const { action, controller, snapshot } = createSignaturePadAction();
+</script>
+
+<canvas use:action aria-label="Signature"></canvas>
+<button type="button" disabled={!$snapshot.canUndo} on:click={() => controller.undo()}>
+  Undo
+</button>
+```
+
+`$snapshot` is a Svelte store.
+
+## React Native
+
+```sh
+npm install signetpad react-native-svg
+```
+
+```tsx
+import { SignaturePad } from 'signetpad/react-native-svg';
+
+export function SignatureField() {
+  return <SignaturePad accessibilityLabel="Signature" />;
+}
+```
+
+For Skia or another renderer:
+
+```tsx
+import { View } from 'react-native';
+import { useSignaturePad } from 'signetpad/react-native';
+import { SignatureSvg } from 'signetpad/react-native-svg';
+
+export function SignatureField() {
+  const { controller, panHandlers } = useSignaturePad({
+    viewport: { width: 360, height: 180 },
+  });
+
+  return (
+    <View {...panHandlers} accessible accessibilityLabel="Signature">
+      <SignatureSvg pad={controller} />
+    </View>
+  );
+}
+```
+
+Pass `pad={controller}` so SVG updates during a stroke.
+
+## Save and restore
+
+```ts
+const data = padRef.current?.toData();
+padRef.current?.loadData(data, { resetHistory: true });
+```
+
+Persist `SignatureData` as JSON. Do not persist a screenshot if you need to restore later.
+
+## Export
+
+```ts
+const svg = padRef.current?.toSvg({ background: '#ffffff' });
+const png = padRef.current?.toDataURL({ type: 'image/png' });
+const file = await padRef.current?.toBlob({ type: 'image/png' });
+```
+
+On a server:
+
+```ts
+import { createSignaturePad } from 'signetpad';
+
+const pad = createSignaturePad();
+pad.loadData(data);
+const svg = pad.toSvg({ background: '#ffffff' });
+```
+
+## Handle
+
+```ts
+type SignaturePadHandle = {
+  controller: SignaturePad;
+  snapshot: SignatureSnapshot;
+  undo(): boolean;
+  redo(): boolean;
+  clear(): boolean;
+  reset(): void;
+  toData(): SignatureData;
+  loadData(data: SignatureData, options?: { resetHistory?: boolean }): void;
+  toSvg(options?: SignatureSvgOptions): string;
+  toDataURL?(options?: { type?: string; quality?: number }): string;
+  toBlob?(options?: { type?: string; quality?: number }): Promise<Blob>;
+};
+```
+
+`toDataURL` and `toBlob` exist on web canvas components only.
+
+## Controller
+
+```ts
+createSignaturePad({
+  viewport: { width: 600, height: 240 },
+  stroke: { color: '#111827', width: 2, opacity: 1, cap: 'round', join: 'round' },
+  behavior: { minDistance: 0.5, smoothing: 0.35, allowDots: true },
+});
+```
+
+| Method | Purpose |
+| --- | --- |
+| `begin(point)` / `move(point)` / `end()` | Capture one stroke |
+| `cancel()` | Discard the active stroke |
+| `undo()` / `redo()` | Stroke history |
+| `clear()` / `reset()` | Remove strokes |
+| `toData()` / `loadData(data)` | Vector JSON |
+| `toSvg(options?)` | Standalone SVG |
+| `getStrokes()` | Cloned strokes |
+| `getSnapshot()` | UI state |
+| `setViewport(viewport)` | Logical size |
+| `setStrokeStyle(style)` | Next-stroke style |
+| `setBehavior(behavior)` | Smoothing and spacing |
+| `subscribe(listener, options)` | `state` (default) or `{ events: 'all' }` |
+
+Returned objects are clones.
+
+```ts
+type SignatureData = {
+  version: 1;
+  viewport: { width: number; height: number };
+  strokes: SignatureStroke[];
+};
+
+type SignatureSnapshot = {
+  revision: number;
+  isEmpty: boolean;
+  isDrawing: boolean;
+  strokeCount: number;
+  canUndo: boolean;
+  canRedo: boolean;
+  bounds: { minX: number; minY: number; maxX: number; maxY: number } | null;
+};
+```
+
+`SignaturePad` props: `viewport`, `stroke`, `behavior`, `enabled`, `preventDefault`, `onSnapshot`, plus host element attributes (`aria-label`, `className`, …). Stroke style changes apply to the next stroke only.
+
+## Custom surface
+
+```tsx
+import { useSignaturePad } from 'signetpad/react';
+
+const { controller, snapshot, surfaceRef, surfaceProps } = useSignaturePad();
+```
+
+Paint `controller.getStrokes()` yourself. Subscribe with `{ events: 'all' }` for point-level updates.
+
+## Rules
+
+1. Use one adapter per surface. Do not mix `signetpad/react` and `signetpad/vue` on the same field.
+2. Copy a complete example. Do not invent a `controller` or renderer unless the example uses one.
+3. Persist `SignatureData` from `toData()`.
+4. One pad instance per signer.
+5. In SSR, create the field on the client.
+6. The package is ESM-only. Node tooling needs Node.js 18.17+.

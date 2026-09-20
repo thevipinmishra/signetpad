@@ -1,37 +1,25 @@
 ---
-title: React Native signature pad
-description: Capture touch signatures in React Native with one SignaturePad component, or compose the hook and SVG renderer yourself.
+title: React Native
+description: SignaturePad for React Native, with SVG rendering.
 section: integrations
 order: 33
 ---
 
-import { LivePreview } from '../../components/LivePreview.tsx';
+Install `react-native-svg` next to `signetpad`.
 
-The preview below is the web canvas. The React Native snippet is the full native module — copy it into a screen and it runs.
-
-<LivePreview client:load example="draw" />
-
-## Install
-
-```bash
+```sh
 npm install signetpad react-native-svg
 ```
-
-## Draw
 
 ```tsx
 import { SignaturePad } from 'signetpad/react-native-svg';
 
 export function SignatureField() {
-  return <SignaturePad accessibilityLabel="Agreement signature" />;
+  return <SignaturePad accessibilityLabel="Signature" />;
 }
 ```
 
-`SignaturePad` from `signetpad/react-native-svg` connects `PanResponder` and the SVG renderer. You do not wrap a `View` or pass `pad={controller}` unless you want a custom layout.
-
 ## Undo and clear
-
-<LivePreview client:load example="history" />
 
 ```tsx
 import { useRef, useState } from 'react';
@@ -47,7 +35,7 @@ export function SignatureField() {
     <View>
       <SignaturePad
         ref={padRef}
-        accessibilityLabel="Agreement signature"
+        accessibilityLabel="Signature"
         viewport={{ width: 360, height: 180 }}
         onSnapshot={setSnapshot}
       />
@@ -57,8 +45,6 @@ export function SignatureField() {
   );
 }
 ```
-
-Read `snapshot` from the handle after each press, or store it in component state if you need reactive button labels.
 
 ## Custom renderer
 
@@ -75,11 +61,11 @@ export function SignatureField() {
   });
 
   return (
-    <View {...panHandlers} accessible accessibilityLabel="Signature drawing area">
+    <View {...panHandlers} accessible accessibilityLabel="Signature">
       <SignatureSvg pad={controller} />
     </View>
   );
 }
 ```
 
-Pass `pad={controller}` so the SVG redraws while a stroke is in progress. Passing `strokes={controller.getStrokes()}` only updates when React re-renders, which misses point-level moves.
+Pass `pad={controller}` so the SVG updates while a stroke is in progress. Passing `strokes={controller.getStrokes()}` only updates on React re-render.

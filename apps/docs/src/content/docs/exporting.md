@@ -1,19 +1,15 @@
 ---
-title: Export SignetPad signatures
-description: Export a complete signature field to SVG, PNG, JPEG, or WebP without assembling a renderer by hand.
+title: Export
+description: Download SVG, PNG, JPEG, or WebP from a signature field.
 section: start
 order: 25
 ---
 
-import { LivePreview } from '../../components/LivePreview.tsx';
+Keep `toData()` when you may restore the signature later. Export an image when another system needs a file.
 
-Keep `toData()` when a signature might be restored or redrawn. Export an image only when another system needs a file. The examples below include the pad, so they run on their own.
+## SVG or PNG
 
-## Download SVG or PNG
-
-`toSvg()` is on the handle and works without a canvas. `toDataURL()` uses the mounted canvas encoder.
-
-<LivePreview client:load example="export" />
+`toSvg()` works without a canvas. `toDataURL()` uses the mounted canvas.
 
 ```tsx
 import { useRef, useState } from 'react';
@@ -47,7 +43,7 @@ export function ExportField() {
 
   return (
     <div>
-      <SignaturePad ref={padRef} aria-label="Signature to export" onSnapshot={setSnapshot} />
+      <SignaturePad ref={padRef} aria-label="Signature" onSnapshot={setSnapshot} />
       <button type="button" onClick={downloadSvg} disabled={snapshot?.isEmpty}>
         Download SVG
       </button>
@@ -61,43 +57,26 @@ export function ExportField() {
 
 JPEG and WebP use the same helper:
 
-```tsx
+```ts
 padRef.current?.toDataURL({ type: 'image/webp', quality: 0.9 });
 ```
 
-For upload APIs, prefer a `Blob`:
+For uploads, use a blob:
 
-```tsx
-import { useRef } from 'react';
-import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
-
-export function UploadField() {
-  const padRef = useRef<SignaturePadHandle>(null);
-
-  async function upload() {
-    const file = await padRef.current?.toBlob({ type: 'image/png' });
-    if (!file) return;
-    await fetch('/api/signatures', {
-      method: 'POST',
-      body: file,
-      headers: { 'content-type': file.type },
-    });
-  }
-
-  return (
-    <div>
-      <SignaturePad ref={padRef} aria-label="Signature to upload" />
-      <button type="button" onClick={() => void upload()}>
-        Upload PNG
-      </button>
-    </div>
-  );
+```ts
+const file = await padRef.current?.toBlob({ type: 'image/png' });
+if (file) {
+  await fetch('/api/signatures', {
+    method: 'POST',
+    body: file,
+    headers: { 'content-type': file.type },
+  });
 }
 ```
 
-## Headless SVG on a server
+## SVG on a server
 
-`toSvg()` also ships on the core controller, so it works in Node without a DOM.
+`toSvg()` also lives on the core controller, so it works in Node without a DOM.
 
 ```ts
 import { createSignaturePad } from 'signetpad';
@@ -109,5 +88,3 @@ export function signatureToSvg(data: SignatureData): string {
   return pad.toSvg({ background: '#ffffff' });
 }
 ```
-
-Use `toSvg()` or `SignatureData` as the exchange format across web, server, and native. Browser image encoders only know formats the current browser supports.

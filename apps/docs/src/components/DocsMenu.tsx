@@ -12,7 +12,7 @@ interface DocsMenuProps {
 }
 
 const sections = [
-  { key: 'start', label: 'Start here' },
+  { key: 'start', label: 'Guides' },
   { key: 'integrations', label: 'Integrations' },
   { key: 'reference', label: 'Reference' },
 ] as const;

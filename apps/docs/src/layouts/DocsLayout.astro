@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import { ArrowLeft, ArrowRight } from 'reicon-react';
 import { DocsMenu } from '../components/DocsMenu';
 import { InstallTabs } from '../components/InstallTabs';
+import { InteractivePad } from '../components/InteractivePad';
 import SiteLayout from './SiteLayout.astro';
 
 interface Props {
@@ -43,9 +44,14 @@ function entryHref(id: string): string {
       </header>
 
       {slug === 'getting-started' && (
-        <div class="docs-install-panel">
-          <InstallTabs client:load />
-        </div>
+        <>
+          <div class="docs-install-panel">
+            <InstallTabs client:load />
+          </div>
+          <div class="docs-pad-panel">
+            <InteractivePad client:load />
+          </div>
+        </>
       )}
 
       <div class="docs-prose"><slot /></div>

@@ -146,12 +146,13 @@ Do not import from a barrel of every adapter. There is no `signetpad/all` on pur
 
 ## Docs and examples
 
-- [Getting started](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/getting-started.mdx)
-- [React](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/react.mdx)
-- [Vue](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/vue.mdx)
-- [SvelteKit](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/sveltekit.mdx)
-- [React Native](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/react-native.mdx)
-- [API](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/api.mdx)
+- [Getting started](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/getting-started.md)
+- [React](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/react.md)
+- [Vue](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/vue.md)
+- [Svelte](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/sveltekit.md)
+- [React Native](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/react-native.md)
+- [API](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/api.md)
+- [llm.txt](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/public/llm.txt)
 
 ## License
 
