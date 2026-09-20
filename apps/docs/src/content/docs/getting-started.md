@@ -17,7 +17,7 @@ That split means you can swap Canvas for SVG, use the same saved data on a serve
 
 ## Install SignetPad
 
-Pick a package manager in the install panel above. One command installs the whole library. Import only the paths you use so unused adapters are tree-shaken out. For other stacks, see the [integration matrix](/docs/integrations).
+Pick a package manager in the command above. One command installs the whole library. Import only the paths you use so unused adapters are tree-shaken out. For other stacks, see the [integration matrix](/docs/integrations).
 
 ## Create a React signature pad
 

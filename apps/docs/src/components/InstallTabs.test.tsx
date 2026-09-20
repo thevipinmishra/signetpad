@@ -1,14 +1,19 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { InstallTabs } from './InstallTabs.js';
+import { PACKAGE_MANAGER_STORAGE_KEY, writePackageManager } from '../lib/package-manager.js';
 
 describe('InstallTabs', () => {
   const writeText = vi.fn();
 
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+    window.localStorage.clear();
+  });
 
   beforeEach(() => {
     writeText.mockReset().mockResolvedValue(undefined);
+    window.localStorage.clear();
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
       value: { writeText },
@@ -27,15 +32,50 @@ describe('InstallTabs', () => {
     expect(screen.getByRole('tabpanel').textContent).toContain('bun add signetpad');
   });
 
+  it('puts package icons inside the tab triggers', () => {
+    render(<InstallTabs />);
+    const pnpm = screen.getByRole('tab', { name: 'pnpm' });
+    expect(pnpm.querySelector('svg')).toBeTruthy();
+    expect(document.querySelector('.code-meta > .code-language-icon')).toBeNull();
+  });
+
   it('copies the selected command and announces the result', async () => {
     render(<InstallTabs />);
     fireEvent.click(screen.getByRole('tab', { name: 'npm' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Copy code' }));
 
     await waitFor(() => {
       expect(writeText).toHaveBeenCalledWith('npm install signetpad');
     });
     expect(screen.getByRole('status').textContent).toContain('npm command copied.');
     expect(screen.getByRole('button', { name: 'Copied' })).toBeTruthy();
+  });
+
+  it('keeps package manager tabs in sync across the UI', async () => {
+    render(
+      <>
+        <InstallTabs />
+        <InstallTabs packages="signetpad react-native-svg" />
+      </>,
+    );
+
+    fireEvent.click(screen.getAllByRole('tab', { name: 'yarn' })[0]!);
+
+    await waitFor(() => {
+      const panels = screen.getAllByRole('tabpanel');
+      expect(panels[0]?.textContent).toContain('yarn add signetpad');
+      expect(panels[1]?.textContent).toContain('yarn add signetpad react-native-svg');
+    });
+    expect(window.localStorage.getItem(PACKAGE_MANAGER_STORAGE_KEY)).toBe('yarn');
+  });
+
+  it('restores the persisted package manager', async () => {
+    writePackageManager('bun');
+    render(<InstallTabs />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: 'bun' }).getAttribute('aria-selected')).toBe('true');
+      expect(screen.getByRole('tabpanel').textContent).toContain('bun add signetpad');
+    });
   });
 });

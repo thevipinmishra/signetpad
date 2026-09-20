@@ -1,8 +1,6 @@
 ---
 import '../styles/global.css';
-import { createElement } from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
-import { ArrowRight, Check, Code, Copy, Pen } from 'reicon-react';
+import { ArrowRight, Pen } from 'reicon-react';
 
 interface Props {
   title: string;
@@ -22,9 +20,6 @@ const structuredData = JSON.stringify({
   description,
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 });
-const codeIcon = renderToStaticMarkup(createElement(Code, { size: 15, weight: 'Outline' }));
-const copyIcon = renderToStaticMarkup(createElement(Copy, { size: 15, weight: 'Outline' }));
-const checkIcon = renderToStaticMarkup(createElement(Check, { size: 15, weight: 'Outline' }));
 ---
 <!doctype html>
 <html lang="en">
@@ -88,71 +83,9 @@ const checkIcon = renderToStaticMarkup(createElement(Check, { size: 15, weight: 
         </div>
       </div>
     </footer>
-    <script is:inline define:vars={{ codeIcon, copyIcon, checkIcon }}>
-      const languageLabels = {
-        bash: 'Terminal',
-        javascript: 'JavaScript',
-        jsx: 'React',
-        svelte: 'Svelte',
-        ts: 'TypeScript',
-        tsx: 'React',
-        vue: 'Vue',
-      };
-
-      const setCopyLabel = (button, icon, text) => {
-        button.innerHTML = icon + '<span>' + text + '</span>';
-      };
-
-      document.querySelectorAll('.docs-prose pre').forEach((pre) => {
-        if (pre.dataset.enhanced === 'true') return;
-
-        const code = pre.querySelector('code');
-        const languageClass = [...(code?.classList ?? [])].find((value) =>
-          value.startsWith('language-'),
-        );
-        const language = pre.dataset.language ?? languageClass?.replace('language-', '') ?? 'text';
-        const shell = document.createElement('div');
-        const toolbar = document.createElement('div');
-        const meta = document.createElement('span');
-        const label = document.createElement('span');
-        const copyButton = document.createElement('button');
-        const status = document.createElement('span');
-
-        shell.className = 'code-block';
-        toolbar.className = 'code-toolbar';
-        meta.className = 'code-meta';
-        label.className = 'code-language';
-        label.textContent = languageLabels[language] ?? language.toUpperCase();
-        meta.innerHTML = codeIcon;
-        meta.append(label);
-        copyButton.type = 'button';
-        copyButton.className = 'code-copy';
-        setCopyLabel(copyButton, copyIcon, 'Copy');
-        copyButton.setAttribute('aria-label', 'Copy code example');
-        status.className = 'code-status';
-        status.setAttribute('role', 'status');
-        status.setAttribute('aria-live', 'polite');
-
-        copyButton.addEventListener('click', async () => {
-          try {
-            await navigator.clipboard.writeText(code?.textContent ?? '');
-            setCopyLabel(copyButton, checkIcon, 'Copied');
-            status.textContent = 'Code copied.';
-            window.setTimeout(() => {
-              setCopyLabel(copyButton, copyIcon, 'Copy');
-              status.textContent = '';
-            }, 1800);
-          } catch {
-            setCopyLabel(copyButton, copyIcon, 'Select code');
-            status.textContent = 'Copying failed. Select the code manually.';
-          }
-        });
-
-        pre.dataset.enhanced = 'true';
-        toolbar.append(meta, copyButton, status);
-        pre.parentNode?.insertBefore(shell, pre);
-        shell.append(toolbar, pre);
-      });
+    <script>
+      import { enhanceCodeBlocks } from '../lib/enhance-code-blocks';
+      enhanceCodeBlocks();
     </script>
   </body>
 </html>

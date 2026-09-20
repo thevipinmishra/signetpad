@@ -1,4 +1,5 @@
-@import '@fontsource-variable/manrope';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
 @import '@fontsource-variable/newsreader';
 
 :root {
@@ -15,10 +16,15 @@
   --accent-soft: #fff0e9;
   --focus: #2b67d1;
   --success: #167769;
+  --font-sans: 'Inter Variable', Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Newsreader Variable', Newsreader, Georgia, serif;
+  --font-mono:
+    'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas,
+    monospace;
   color: var(--ink);
   background:
     radial-gradient(circle at 88% 0%, rgb(228 111 69 / 13%), transparent 26rem), var(--canvas);
-  font-family: 'Manrope Variable', Manrope, ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-optical-sizing: auto;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -28,6 +34,12 @@
 
 * {
   box-sizing: border-box;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
 }
 
 body {
@@ -363,7 +375,8 @@ input[type='text'] {
 
 .color-control code {
   color: var(--ink-soft);
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
   font-size: 0.75rem;
 }
 
@@ -434,7 +447,8 @@ input[type='range'] {
   color: #dbe7ed;
   background: #101d28;
   box-shadow: 0 10px 24px rgb(16 29 40 / 14%);
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
   font-size: 0.67rem;
   line-height: 1.65;
 }
@@ -476,7 +490,7 @@ input[type='range'] {
 
 .pattern-grid span {
   color: var(--accent);
-  font-family: 'Newsreader Variable', Newsreader, Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 1.15rem;
   font-style: italic;
 }
