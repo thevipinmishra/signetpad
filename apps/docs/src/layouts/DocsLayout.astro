@@ -27,7 +27,15 @@ function entryHref(id: string): string {
   return '/docs/' + id;
 }
 
-const PAD_PAGES = new Set(['getting-started', 'examples', 'react']);
+const PAD_PAGES = new Set([
+  'getting-started',
+  'examples',
+  'react',
+  'nextjs',
+  'vue',
+  'sveltekit',
+  'react-native',
+]);
 ---
 <SiteLayout title={title} description={description}>
   <div class="docs-frame">

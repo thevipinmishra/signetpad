@@ -70,62 +70,67 @@ export function InteractivePad() {
       />
       <div className="pad-toolbar">
         <div className="pad-actions" role="group" aria-label="Signature actions">
-          <button
-            type="button"
-            className="pad-icon-button"
-            data-tooltip="Undo"
-            aria-label="Undo"
-            onClick={() => controller.undo()}
-            disabled={!snapshot.canUndo}
-          >
-            <Undo aria-hidden="true" size={15} weight="Outline" />
-          </button>
-          <button
-            type="button"
-            className="pad-icon-button"
-            data-tooltip="Redo"
-            aria-label="Redo"
-            onClick={() => controller.redo()}
-            disabled={!snapshot.canRedo}
-          >
-            <Redo aria-hidden="true" size={15} weight="Outline" />
-          </button>
-          <button
-            type="button"
-            className="pad-icon-button"
-            data-tooltip="Clear"
-            aria-label="Clear"
-            onClick={() => {
-              controller.clear();
-              setMessage('Signature cleared.');
-            }}
-            disabled={snapshot.isEmpty}
-          >
-            <Trash aria-hidden="true" size={15} weight="Outline" />
-          </button>
+          <span className="pad-tooltip" data-tooltip="Undo">
+            <button
+              type="button"
+              className="pad-icon-button"
+              aria-label="Undo"
+              onClick={() => controller.undo()}
+              disabled={!snapshot.canUndo}
+            >
+              <Undo aria-hidden="true" size={15} weight="Outline" />
+            </button>
+          </span>
+          <span className="pad-tooltip" data-tooltip="Redo">
+            <button
+              type="button"
+              className="pad-icon-button"
+              aria-label="Redo"
+              onClick={() => controller.redo()}
+              disabled={!snapshot.canRedo}
+            >
+              <Redo aria-hidden="true" size={15} weight="Outline" />
+            </button>
+          </span>
+          <span className="pad-tooltip" data-tooltip="Clear">
+            <button
+              type="button"
+              className="pad-icon-button"
+              aria-label="Clear"
+              onClick={() => {
+                controller.clear();
+                setMessage('Signature cleared.');
+              }}
+              disabled={snapshot.isEmpty}
+            >
+              <Trash aria-hidden="true" size={15} weight="Outline" />
+            </button>
+          </span>
         </div>
         <div className="pad-style" role="group" aria-label="Stroke style">
           {STROKE_COLORS.map((color) => (
-            <button
-              key={color}
-              type="button"
-              className={'pad-swatch' + (strokeColor === color ? ' is-active' : '')}
-              style={{ background: color }}
-              data-tooltip="Stroke color"
-              aria-label={'Stroke color ' + color}
-              aria-pressed={strokeColor === color}
-              onClick={() => setStrokeColor(color)}
-            />
+            <span key={color} className="pad-tooltip" data-tooltip="Stroke color">
+              <button
+                type="button"
+                className={'pad-swatch' + (strokeColor === color ? ' is-active' : '')}
+                style={{ background: color }}
+                aria-label={'Stroke color ' + color}
+                aria-pressed={strokeColor === color}
+                onClick={() => setStrokeColor(color)}
+              />
+            </span>
           ))}
-          <label className="pad-custom-color" data-tooltip="Custom color">
+          <label className="pad-tooltip" data-tooltip="Custom color">
             <span className="visually-hidden">Custom stroke color</span>
-            <input
-              type="color"
-              value={strokeColor}
-              onChange={(event) => setStrokeColor(event.target.value)}
-            />
+            <span className="pad-custom-color">
+              <input
+                type="color"
+                value={strokeColor}
+                onChange={(event) => setStrokeColor(event.target.value)}
+              />
+            </span>
           </label>
-          <label className="pad-width" data-tooltip={strokeWidth + 'px'}>
+          <label className="pad-width pad-tooltip" data-tooltip={strokeWidth + 'px'}>
             <span className="visually-hidden">Stroke width {strokeWidth} pixels</span>
             <input
               type="range"
