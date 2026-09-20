@@ -4,21 +4,26 @@ SignetPad publishes as a single unscoped npm package: [`signetpad`](https://www.
 
 ## First publish
 
-1. Confirm `pnpm check` is green on `main`.
-2. Add an automation `NPM_TOKEN` as a GitHub Actions secret.
-3. Publish once from a trusted machine or let the Release workflow publish:
+From `main`, after `npm login`:
 
-   ```sh
-   pnpm run publish
-   ```
+```sh
+pnpm run publish
+```
 
-GitHub Actions can publish later releases with provenance when `NPM_TOKEN` is present. The
-workflow opens a Version Packages PR from merged changesets and publishes when that PR lands.
+That builds `packages/signetpad` and publishes it to npm.
 
 ## Routine releases
 
 1. Contributors add a changeset in their pull request (`pnpm changeset`).
-2. Merging to `main` lets the Release workflow open or update the Version Packages PR.
-3. Review that PR, then merge it. Changesets publishes `signetpad` and pushes a git tag.
+2. On a trusted machine, from `main`:
+
+   ```sh
+   pnpm install
+   pnpm check
+   pnpm changeset version
+   git add -A && git commit -m "chore: version packages"
+   pnpm run publish
+   git push --follow-tags
+   ```
 
 Do not publish `@signetpad/docs` or `@signetpad/examples`. They are private workspace apps.

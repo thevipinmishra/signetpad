@@ -53,8 +53,7 @@ Prettier is the formatter. TypeScript is the linter: `strict`, `noUncheckedIndex
 
 ## Releases
 
-Maintainers follow [RELEASING.md](./RELEASING.md). Publishing needs an `NPM_TOKEN` repository
-secret. There is no npm organization; the package name is `signetpad`.
+Maintainers follow [RELEASING.md](./RELEASING.md). There is no npm organization; the package name is `signetpad`.
 
 ## Reporting issues
 
