@@ -17,12 +17,16 @@ npm install signetpad
 ```
 
 ```tsx
-import { useSignaturePad } from 'signetpad/react';
-import { createCanvasRenderer } from 'signetpad/canvas';
+import { SignaturePad } from 'signetpad/react';
+
+export function SignatureField() {
+  return <SignaturePad aria-label="Agreement signature" />;
+}
 ```
 
 ## Features
 
+- Ready-made `SignaturePad` components for React, Vue, and React Native
 - Headless, zero-dependency signature controller
 - React, Vue, Svelte, and React Native adapters
 - Canvas renderer with PNG, JPEG, and WebP export
@@ -35,46 +39,26 @@ import { createCanvasRenderer } from 'signetpad/canvas';
 | Import                       | Role                                                     |
 | ---------------------------- | -------------------------------------------------------- |
 | `signetpad`                  | Controller, history, validation, vector data, SVG export |
-| `signetpad/react`            | React and Next.js pointer adapter                        |
-| `signetpad/vue`              | Vue 3 and Nuxt composable                                |
-| `signetpad/svelte`           | Svelte and SvelteKit action                              |
-| `signetpad/react-native`     | React Native PanResponder adapter                        |
+| `signetpad/react`            | React `SignaturePad` + `useSignaturePad`                 |
+| `signetpad/vue`              | Vue `SignaturePad` + composable                          |
+| `signetpad/svelte`           | Svelte action with automatic canvas painting             |
+| `signetpad/react-native`     | React Native PanResponder hook                           |
 | `signetpad/canvas`           | Canvas 2D renderer                                       |
-| `signetpad/react-native-svg` | React Native SVG renderer                                |
+| `signetpad/react-native-svg` | Native `SignaturePad` + `SignatureSvg`                   |
 
 ## React signature pad
 
 ```tsx
-import { useLayoutEffect, useRef } from 'react';
-import { useSignaturePad } from 'signetpad/react';
-import { createCanvasRenderer } from 'signetpad/canvas';
-
-const viewport = { width: 600, height: 240 };
+import { useRef } from 'react';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
 
 export function SignatureField() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { controller, snapshot, surfaceRef, surfaceProps } = useSignaturePad({ viewport });
-
-  useLayoutEffect(() => {
-    const context = canvasRef.current?.getContext('2d');
-    if (!context) return;
-    const renderer = createCanvasRenderer(context, { viewport, dpr: devicePixelRatio });
-    renderer.render(controller.getStrokes());
-    return controller.subscribe(() => renderer.update(controller.getStrokes()), { events: 'all' });
-  }, [controller]);
+  const padRef = useRef<SignaturePadHandle>(null);
 
   return (
     <>
-      <canvas
-        ref={(node) => {
-          canvasRef.current = node;
-          surfaceRef(node);
-        }}
-        style={{ touchAction: 'none' }}
-        aria-label="Signature input"
-        {...surfaceProps}
-      />
-      <button type="button" disabled={!snapshot.canUndo} onClick={() => controller.undo()}>
+      <SignaturePad ref={padRef} aria-label="Agreement signature" />
+      <button type="button" onClick={() => padRef.current?.undo()}>
         Undo
       </button>
     </>
@@ -86,10 +70,10 @@ See [`packages/signetpad/README.md`](./packages/signetpad/README.md) for Vue, Sv
 
 ## Documentation
 
-- [Getting started](./apps/docs/src/content/docs/getting-started.md)
-- [Examples](./apps/docs/src/content/docs/examples.md)
-- [API](./apps/docs/src/content/docs/api.md)
-- [Integrations](./apps/docs/src/content/docs/integrations.md)
+- [Getting started](./apps/docs/src/content/docs/getting-started.mdx)
+- [Examples](./apps/docs/src/content/docs/examples.mdx)
+- [API](./apps/docs/src/content/docs/api.mdx)
+- [Integrations](./apps/docs/src/content/docs/integrations.mdx)
 
 Run the docs site locally with `pnpm --filter @signetpad/docs dev`.
 

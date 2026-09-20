@@ -324,6 +324,84 @@ button:disabled {
   margin-block-start: 1.35rem;
 }
 
+.live-preview {
+  margin: 1.5rem 0 1.7rem;
+}
+
+.live-preview figcaption {
+  margin-block-end: 0.45rem;
+  color: var(--color-ink-faint);
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.live-preview-body {
+  padding: 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.95rem;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.live-preview-body .pad-widget {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.live-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-block-start: 0.65rem;
+}
+
+.live-preview-actions button,
+.live-preview-form button {
+  min-height: 1.85rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.42rem;
+  color: var(--color-ink);
+  background: var(--color-surface);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.live-preview-actions button:disabled {
+  opacity: 0.46;
+}
+
+.live-preview-status {
+  margin: 0.55rem 0 0;
+  color: var(--color-ink-soft);
+  font-size: 0.78rem;
+}
+
+.live-preview-form {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.live-preview-form label {
+  display: grid;
+  gap: 0.28rem;
+  color: var(--color-ink-soft);
+  font-size: 0.78rem;
+}
+
+.live-preview-form input[type='text'] {
+  min-height: 2.1rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.45rem;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+}
+
 .pad-canvas {
   display: block;
   width: 100%;

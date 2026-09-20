@@ -26,9 +26,8 @@ pnpm --filter @signetpad/examples dev
 app bundles:
 
 1. `signetpad` owns stroke state, history, validation, and serialization.
-2. `signetpad/react`, `signetpad/vue`, `signetpad/svelte`, and `signetpad/react-native` only
-   translate host input into `begin` / `move` / `end`.
-3. `signetpad/canvas` and `signetpad/react-native-svg` only draw `SignatureStroke[]`.
+2. `signetpad/react`, `signetpad/vue`, `signetpad/svelte`, and `signetpad/react-native` translate host input into `begin` / `move` / `end`. Ready-made `SignaturePad` components (and the Svelte canvas action) also paint for you.
+3. `signetpad/canvas` and `signetpad/react-native-svg` draw `SignatureStroke[]` when you bring your own surface.
 
 Keep new features on the smallest entry that can own them. Do not add a Next.js or Nuxt
 import path unless the base React or Vue adapter cannot express the integration.

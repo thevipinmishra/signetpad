@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   ArrowRotate,
   Code,
@@ -13,9 +13,8 @@ import {
   Trash,
   Undo,
 } from 'reicon-react';
-import { useSignaturePad } from 'signetpad/react';
-import { createCanvasRenderer, type CanvasRenderer } from 'signetpad/canvas';
-import type { SignatureData } from 'signetpad';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
+import type { SignatureData, SignatureSnapshot } from 'signetpad';
 
 const VIEWPORT = { width: 720, height: 300 };
 const IMAGE_FORMATS = [
@@ -46,6 +45,16 @@ const SAMPLE_SIGNATURE: SignatureData = {
   ],
 };
 
+const EMPTY_SNAPSHOT: SignatureSnapshot = {
+  revision: 0,
+  isEmpty: true,
+  isDrawing: false,
+  strokeCount: 0,
+  canUndo: false,
+  canRedo: false,
+  bounds: null,
+};
+
 export function App() {
   const [typedName, setTypedName] = useState('');
   const [strokeColor, setStrokeColor] = useState('#102935');
@@ -54,64 +63,26 @@ export function App() {
   const [imageFormat, setImageFormat] =
     useState<(typeof IMAGE_FORMATS)[number]['type']>('image/png');
   const [status, setStatus] = useState('Ready for a signature.');
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const rendererRef = useRef<CanvasRenderer | null>(null);
-  const { controller, snapshot, surfaceProps, surfaceRef } = useSignaturePad({
-    viewport: VIEWPORT,
-    stroke: { color: strokeColor, width: strokeWidth },
-  });
-
-  const attachCanvas = useCallback(
-    (canvas: HTMLCanvasElement | null) => {
-      surfaceRef(canvas);
-      canvasRef.current = canvas;
-    },
-    [surfaceRef],
-  );
-
-  useLayoutEffect(() => {
-    const context = canvasRef.current?.getContext('2d');
-    if (!context) return;
-
-    const renderer = createCanvasRenderer(context, {
-      viewport: controller.getViewport(),
-      dpr: window.devicePixelRatio || 1,
-    });
-    renderer.render(controller.getStrokes());
-    rendererRef.current = renderer;
-
-    return () => {
-      rendererRef.current = null;
-    };
-  }, [controller]);
-
-  useEffect(
-    () =>
-      controller.subscribe(
-        () => {
-          rendererRef.current?.update(controller.getStrokes());
-        },
-        { events: 'all' },
-      ),
-    [controller],
-  );
-
-  useEffect(() => {
-    controller.setStrokeStyle({ color: strokeColor, width: strokeWidth });
-  }, [controller, strokeColor, strokeWidth]);
+  const [snapshot, setSnapshot] = useState(EMPTY_SNAPSHOT);
+  const padRef = useRef<SignaturePadHandle>(null);
 
   const signatureData = useMemo(
-    () => JSON.stringify(controller.toData(), null, 2),
-    [controller, snapshot.revision],
+    () =>
+      JSON.stringify(
+        padRef.current?.toData() ?? { version: 1, viewport: VIEWPORT, strokes: [] },
+        null,
+        2,
+      ),
+    [snapshot.revision],
   );
 
   const handleClear = () => {
-    controller.clear();
+    padRef.current?.clear();
     setStatus('Signature cleared.');
   };
 
   const handleLoadSample = () => {
-    controller.loadData(SAMPLE_SIGNATURE);
+    padRef.current?.loadData(SAMPLE_SIGNATURE);
     setStatus('Sample signature loaded.');
   };
 
@@ -135,19 +106,23 @@ export function App() {
   };
 
   const handleExportImage = () => {
-    if (snapshot.isEmpty || !rendererRef.current) return;
+    if (snapshot.isEmpty) return;
 
     const format = IMAGE_FORMATS.find((item) => item.type === imageFormat);
     if (!format) return;
 
-    download(rendererRef.current.toDataURL({ type: imageFormat }), 'signature.' + format.extension);
+    const href = padRef.current?.toDataURL({ type: imageFormat });
+    if (!href) return;
+    download(href, 'signature.' + format.extension);
     setStatus(format.label + ' image downloaded.');
   };
 
   const handleExportSvg = () => {
     if (snapshot.isEmpty) return;
 
-    const blob = new Blob([controller.toSvg()], { type: 'image/svg+xml' });
+    const svg = padRef.current?.toSvg();
+    if (!svg) return;
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
     download(url, 'signature.svg');
     window.setTimeout(() => URL.revokeObjectURL(url), 0);
@@ -199,24 +174,32 @@ export function App() {
             </p>
 
             <div className="canvas-frame">
-              <canvas
-                ref={attachCanvas}
+              <SignaturePad
+                ref={padRef}
                 className="signature-canvas"
-                width={VIEWPORT.width}
-                height={VIEWPORT.height}
+                viewport={VIEWPORT}
+                stroke={{ color: strokeColor, width: strokeWidth }}
                 tabIndex={0}
                 aria-label="Signature drawing area"
                 aria-describedby="signature-help signature-status"
-                {...surfaceProps}
+                onSnapshot={setSnapshot}
               />
             </div>
 
             <div className="toolbar" aria-label="Signature actions">
-              <button type="button" onClick={() => controller.undo()} disabled={!snapshot.canUndo}>
+              <button
+                type="button"
+                onClick={() => padRef.current?.undo()}
+                disabled={!snapshot.canUndo}
+              >
                 <Undo aria-hidden="true" size={15} weight="Outline" />
                 Undo
               </button>
-              <button type="button" onClick={() => controller.redo()} disabled={!snapshot.canRedo}>
+              <button
+                type="button"
+                onClick={() => padRef.current?.redo()}
+                disabled={!snapshot.canRedo}
+              >
                 <Redo aria-hidden="true" size={15} weight="Outline" />
                 Redo
               </button>

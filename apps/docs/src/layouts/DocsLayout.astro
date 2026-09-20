@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import { ArrowLeft, ArrowRight } from 'reicon-react';
 import { DocsMenu } from '../components/DocsMenu';
 import { InstallTabs } from '../components/InstallTabs';
-import { InteractivePad } from '../components/InteractivePad';
 import SiteLayout from './SiteLayout.astro';
 
 interface Props {
@@ -26,16 +25,6 @@ const menuEntries = entries.map((entry) => ({
 function entryHref(id: string): string {
   return '/docs/' + id;
 }
-
-const PAD_PAGES = new Set([
-  'getting-started',
-  'examples',
-  'react',
-  'nextjs',
-  'vue',
-  'sveltekit',
-  'react-native',
-]);
 ---
 <SiteLayout title={title} description={description}>
   <div class="docs-frame">
@@ -56,12 +45,6 @@ const PAD_PAGES = new Set([
       {slug === 'getting-started' && (
         <div class="docs-install-panel">
           <InstallTabs client:load />
-        </div>
-      )}
-
-      {PAD_PAGES.has(slug) && (
-        <div class="docs-pad-panel">
-          <InteractivePad client:load />
         </div>
       )}
 

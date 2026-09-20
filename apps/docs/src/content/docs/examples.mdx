@@ -1,0 +1,193 @@
+---
+title: SignetPad examples
+description: Complete, copy-pasteable patterns for forms, drafts, stroke style, review copies, and exports.
+section: start
+order: 20
+---
+
+import { LivePreview } from '../../components/LivePreview.tsx';
+
+Each example below is a full React module. Nothing is implied from an earlier snippet.
+
+## Checkout signature field
+
+Accept a drawn signature or a typed name. Form rules stay in your component.
+
+<LivePreview client:load example="form" />
+
+```tsx
+import { useRef, useState, type FormEvent } from 'react';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
+
+export function AgreementForm() {
+  const padRef = useRef<SignaturePadHandle>(null);
+  const [typedName, setTypedName] = useState('');
+  const [status, setStatus] = useState('Draw a signature or type a name.');
+
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const empty = padRef.current?.snapshot.isEmpty ?? true;
+    if (empty && !typedName.trim()) {
+      setStatus('Draw a signature or enter the signatory name.');
+      return;
+    }
+
+    const signature = empty ? null : padRef.current?.toData();
+    setStatus(signature ? 'Signature is ready to submit.' : 'Typed name is ready to submit.');
+  }
+
+  return (
+    <form onSubmit={onSubmit}>
+      <SignaturePad ref={padRef} aria-label="Agreement signature" />
+      <label>
+        Type the signatory name instead
+        <input
+          type="text"
+          autoComplete="name"
+          value={typedName}
+          onChange={(event) => setTypedName(event.target.value)}
+        />
+      </label>
+      <button type="submit">Prepare signature</button>
+      <p role="status">{status}</p>
+    </form>
+  );
+}
+```
+
+## Save a draft, then restore it
+
+Persist versioned vector data, not a canvas screenshot. The same payload can render at another size later.
+
+<LivePreview client:load example="persist" />
+
+```tsx
+import { useRef, useState } from 'react';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
+import type { SignatureData } from 'signetpad';
+
+const storageKey = 'checkout-signature';
+
+export function DraftField() {
+  const padRef = useRef<SignaturePadHandle>(null);
+  const [status, setStatus] = useState('Draw something, then save a draft.');
+
+  function saveDraft() {
+    const data = padRef.current?.toData();
+    if (!data || data.strokes.length === 0) {
+      setStatus('Nothing to save yet.');
+      return;
+    }
+    localStorage.setItem(storageKey, JSON.stringify(data));
+    setStatus('Draft saved.');
+  }
+
+  function restoreDraft() {
+    const value = localStorage.getItem(storageKey);
+    if (!value) {
+      setStatus('No draft to restore.');
+      return;
+    }
+    const data = JSON.parse(value) as SignatureData;
+    padRef.current?.loadData(data);
+    setStatus('Draft restored.');
+  }
+
+  return (
+    <div>
+      <SignaturePad ref={padRef} aria-label="Signature draft" />
+      <button type="button" onClick={saveDraft}>
+        Save draft
+      </button>
+      <button type="button" onClick={restoreDraft}>
+        Restore draft
+      </button>
+      <p role="status">{status}</p>
+    </div>
+  );
+}
+```
+
+## Customize future strokes
+
+Style changes do not mutate strokes that were already drawn.
+
+<LivePreview client:load example="stroke" />
+
+```tsx
+import { useState } from 'react';
+import { SignaturePad } from 'signetpad/react';
+
+export function StyledField() {
+  const [color, setColor] = useState('#102935');
+  const [width, setWidth] = useState(2.5);
+
+  return (
+    <div>
+      <SignaturePad aria-label="Styled signature" stroke={{ color, width }} />
+      <input type="color" value={color} onChange={(event) => setColor(event.target.value)} />
+      <input
+        type="range"
+        min={1}
+        max={8}
+        step={0.5}
+        value={width}
+        onChange={(event) => setWidth(Number(event.target.value))}
+      />
+    </div>
+  );
+}
+```
+
+## Review-only copy
+
+Load saved data and turn input off. The same `SignatureData` can drive a receipt, a review screen, or a PDF later.
+
+<LivePreview client:load example="readonly" />
+
+```tsx
+import { useEffect, useRef } from 'react';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
+import type { SignatureData } from 'signetpad';
+
+export function ReviewSignature({ saved }: { saved: SignatureData }) {
+  const padRef = useRef<SignaturePadHandle>(null);
+
+  useEffect(() => {
+    padRef.current?.loadData(saved);
+  }, [saved]);
+
+  return <SignaturePad ref={padRef} aria-label="Saved signature" enabled={false} />;
+}
+```
+
+## Multi-signer forms
+
+Create one pad per signer. Do not share a handle between two fields — each signature needs its own history.
+
+```tsx
+import { useRef } from 'react';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
+
+export function DualSignature() {
+  const customerRef = useRef<SignaturePadHandle>(null);
+  const witnessRef = useRef<SignaturePadHandle>(null);
+
+  function collect() {
+    return {
+      customer: customerRef.current?.toData() ?? null,
+      witness: witnessRef.current?.toData() ?? null,
+    };
+  }
+
+  return (
+    <div>
+      <SignaturePad ref={customerRef} aria-label="Customer signature" />
+      <SignaturePad ref={witnessRef} aria-label="Witness signature" />
+      <button type="button" onClick={() => console.log(collect())}>
+        Collect signatures
+      </button>
+    </div>
+  );
+}
+```

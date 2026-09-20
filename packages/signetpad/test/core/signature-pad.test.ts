@@ -248,4 +248,17 @@ describe('createSignaturePad', () => {
     expect(pad.getViewport()).toEqual({ width: 320, height: 120 });
     expect(pad.toData().strokes[0]?.style).toMatchObject({ color: '#ff0000', width: 5 });
   });
+
+  it('does not emit when viewport, style, or behavior are unchanged', () => {
+    const pad = createSignaturePad({
+      viewport: { width: 320, height: 120 },
+      stroke: { color: '#ff0000', width: 5 },
+      behavior: { minDistance: 0, smoothing: 0, allowDots: true },
+    });
+    const revision = pad.getSnapshot().revision;
+    pad.setViewport({ width: 320, height: 120 });
+    pad.setStrokeStyle({ color: '#ff0000', width: 5 });
+    pad.setBehavior({ minDistance: 0, smoothing: 0, allowDots: true });
+    expect(pad.getSnapshot().revision).toBe(revision);
+  });
 });

@@ -1,4 +1,10 @@
-import type { SignatureData, SignatureStroke, StrokeStyle, Viewport } from '../types.js';
+import type {
+  SignatureData,
+  SignaturePad,
+  SignatureStroke,
+  StrokeStyle,
+  Viewport,
+} from '../types.js';
 
 export interface CanvasRendererOptions {
   /** Logical viewport dimensions. Defaults to the current canvas backing size. */
@@ -26,6 +32,23 @@ export interface CanvasRenderer {
   toDataURL(options?: CanvasImageOptions): string;
   /** Encodes the current HTML or Offscreen canvas as a Blob. */
   toBlob(options?: CanvasImageOptions): Promise<Blob>;
+}
+
+export interface AttachCanvasRendererOptions {
+  /** Backing-store scale. Defaults to the current `devicePixelRatio`, or 1. */
+  dpr?: number;
+}
+
+export interface AttachedCanvasRenderer {
+  renderer: CanvasRenderer;
+  detach: () => void;
+}
+
+function resolveDpr(dpr: number | undefined): number {
+  if (dpr !== undefined) return dpr;
+  const next =
+    typeof globalThis.devicePixelRatio === 'number' ? globalThis.devicePixelRatio : Number.NaN;
+  return Number.isFinite(next) && next > 0 ? next : 1;
 }
 
 type CanvasContext = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
@@ -281,4 +304,39 @@ export function createCanvasRenderer(
       });
     },
   };
+}
+
+/**
+ * Paints a controller onto a canvas and keeps the pixels in sync with every point.
+ * Returns `null` when the canvas cannot create a 2D context.
+ */
+export function attachCanvasRenderer(
+  canvas: HTMLCanvasElement,
+  pad: SignaturePad,
+  options: AttachCanvasRendererOptions = {},
+): AttachedCanvasRenderer | null {
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  let viewport = pad.getViewport();
+  const dpr = resolveDpr(options.dpr);
+  const renderer = createCanvasRenderer(context, { viewport, dpr });
+  renderer.render(pad.getStrokes());
+
+  const detach = pad.subscribe(
+    () => {
+      const nextViewport = pad.getViewport();
+      if (nextViewport.width !== viewport.width || nextViewport.height !== viewport.height) {
+        viewport = nextViewport;
+        renderer.resize(viewport, dpr);
+        renderer.render(pad.getStrokes());
+        return;
+      }
+
+      renderer.update(pad.getStrokes());
+    },
+    { events: 'all' },
+  );
+
+  return { renderer, detach };
 }
