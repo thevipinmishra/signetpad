@@ -17,7 +17,7 @@ That separation means you can swap Canvas for SVG, use the same saved data on a 
 
 ## Install the pieces
 
-Pick a package manager in the install panel above. That command sets up the core, the React input
+Pick a package manager in the command above. That command sets up the core, the React input
 adapter, and the Canvas renderer. For other stacks, use the [integration matrix](/docs/integrations).
 
 ## Create your first pad
