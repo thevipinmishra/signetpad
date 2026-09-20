@@ -15,7 +15,7 @@
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/newsreader": "^5.3.0",
     "signetpad": "workspace:*",
-    "astro": "^7.3.1",
+    "astro": "^7.3.3",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "reicon-react": "^1.2.5",
