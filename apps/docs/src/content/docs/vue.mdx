@@ -1,0 +1,93 @@
+---
+title: Vue signature pad
+description: Drop a complete SignetPad field into Vue 3 or Nuxt with the SignaturePad component.
+section: integrations
+order: 34
+---
+
+import { LivePreview } from '../../components/LivePreview.tsx';
+
+The live previews on this page are the same controller you get from `signetpad/vue`. Each Vue snippet is a full single-file component.
+
+## Install
+
+```bash
+pnpm add signetpad
+```
+
+## Draw
+
+<LivePreview client:load example="draw" />
+
+```vue
+<script setup lang="ts">
+import { SignaturePad } from 'signetpad/vue';
+</script>
+
+<template>
+  <SignaturePad aria-label="Agreement signature" />
+</template>
+```
+
+In Nuxt, wrap the field in `<ClientOnly>` when the page is server rendered.
+
+## Undo, redo, and clear
+
+<LivePreview client:load example="history" />
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/vue';
+
+const pad = ref<SignaturePadHandle | null>(null);
+</script>
+
+<template>
+  <SignaturePad ref="pad" aria-label="Agreement signature" />
+  <button type="button" :disabled="!pad?.snapshot.canUndo" @click="pad?.undo()">Undo</button>
+  <button type="button" :disabled="!pad?.snapshot.canRedo" @click="pad?.redo()">Redo</button>
+  <button type="button" :disabled="pad?.snapshot.isEmpty" @click="pad?.clear()">Clear</button>
+</template>
+```
+
+## Stroke color
+
+<LivePreview client:load example="stroke" />
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { SignaturePad } from 'signetpad/vue';
+
+const color = ref('#102935');
+</script>
+
+<template>
+  <SignaturePad aria-label="Styled signature" :stroke="{ color, width: 3 }" />
+  <input v-model="color" type="color" />
+</template>
+```
+
+## Custom surface
+
+Use the composable when the drawing surface is not a canvas. You still own rendering.
+
+```vue
+<script setup lang="ts">
+import { useSignaturePad } from 'signetpad/vue';
+
+const { controller, snapshot, surfaceProps } = useSignaturePad({
+  viewport: { width: 600, height: 240 },
+});
+</script>
+
+<template>
+  <div
+    v-bind="surfaceProps"
+    style="touch-action: none; height: 240px"
+    aria-label="Signature input"
+  />
+  <button type="button" :disabled="!snapshot.canUndo" @click="controller.undo()">Undo</button>
+</template>
+```

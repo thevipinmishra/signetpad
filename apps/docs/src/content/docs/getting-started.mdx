@@ -1,0 +1,87 @@
+---
+title: Getting started with SignetPad
+description: Install SignetPad and add a working signature field with a few lines of framework code.
+section: start
+order: 10
+---
+
+import { LivePreview } from '../../components/LivePreview.tsx';
+
+SignetPad captures handwritten signatures as versioned vector data. Install one package, then import the adapter for your app. The examples on this page are complete — copy any of them into a file and it runs.
+
+## Install
+
+Pick a package manager in the command above. One command installs the whole library. Import only the path you use so unused adapters are tree-shaken out.
+
+## Add a React signature field
+
+This is the smallest working integration. `SignaturePad` captures pointer input and paints the canvas for you.
+
+<LivePreview client:load example="draw" />
+
+```tsx
+import { SignaturePad } from 'signetpad/react';
+
+export function SignatureField() {
+  return <SignaturePad aria-label="Agreement signature" />;
+}
+```
+
+That component works in React 18+, Vite, Remix, and Astro islands. In Next.js, add `'use client'` at the top of the file. See the [React](/docs/react) and [Next.js](/docs/nextjs) guides for undo, export, and form patterns.
+
+## Vue
+
+<LivePreview client:load example="draw" />
+
+```vue
+<script setup lang="ts">
+import { SignaturePad } from 'signetpad/vue';
+</script>
+
+<template>
+  <SignaturePad aria-label="Agreement signature" />
+</template>
+```
+
+In Nuxt, wrap the field in `<ClientOnly>`.
+
+## Svelte and SvelteKit
+
+Canvas nodes are painted automatically. `$snapshot` is a Svelte store, so button state stays in sync.
+
+<LivePreview client:load example="history" />
+
+```svelte
+<script lang="ts">
+  import { createSignaturePadAction } from 'signetpad/svelte';
+
+  const { action, controller, snapshot } = createSignaturePadAction();
+</script>
+
+<canvas use:action aria-label="Agreement signature"></canvas>
+<button type="button" disabled={!$snapshot.canUndo} on:click={() => controller.undo()}>
+  Undo
+</button>
+```
+
+## React Native
+
+Install `react-native-svg` next to `signetpad`. `SignaturePad` wires `PanResponder` and the SVG renderer together.
+
+```tsx
+import { SignaturePad } from 'signetpad/react-native-svg';
+
+export function SignatureField() {
+  return <SignaturePad accessibilityLabel="Agreement signature" />;
+}
+```
+
+## What still lives underneath
+
+If you need a custom surface, the same package still splits the jobs:
+
+1. `signetpad` records points, history, and `toData()` / `toSvg()`.
+2. `signetpad/react`, `signetpad/vue`, `signetpad/svelte`, and `signetpad/react-native` translate host input.
+3. `signetpad/canvas` and `signetpad/react-native-svg` draw strokes.
+
+Most apps never call those pieces directly. Start with `SignaturePad`, then drop down to `useSignaturePad` only when you bring your own renderer.

@@ -1,56 +1,27 @@
-import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { Redo, Trash, Undo } from 'reicon-react';
-import { useSignaturePad } from 'signetpad/react';
-import { createCanvasRenderer, type CanvasRenderer } from 'signetpad/canvas';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
+import type { SignatureSnapshot } from 'signetpad';
 
 const VIEWPORT = { width: 720, height: 240 };
 const STROKE_COLORS = ['#102935', '#b94d29', '#167769', '#2b67d1'] as const;
+const EMPTY_SNAPSHOT: SignatureSnapshot = {
+  revision: 0,
+  isEmpty: true,
+  isDrawing: false,
+  strokeCount: 0,
+  canUndo: false,
+  canRedo: false,
+  bounds: null,
+};
 
 export function InteractivePad() {
   const ids = useId();
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const rendererRef = useRef<CanvasRenderer | null>(null);
+  const padRef = useRef<SignaturePadHandle>(null);
   const [strokeColor, setStrokeColor] = useState<string>(STROKE_COLORS[0]);
   const [strokeWidth, setStrokeWidth] = useState(3);
+  const [snapshot, setSnapshot] = useState(EMPTY_SNAPSHOT);
   const [message, setMessage] = useState('Ready when you are.');
-  const { controller, snapshot, surfaceProps, surfaceRef } = useSignaturePad({
-    viewport: VIEWPORT,
-    stroke: { color: strokeColor, width: strokeWidth },
-  });
-  const attachCanvas = useCallback(
-    (canvas: HTMLCanvasElement | null) => {
-      surfaceRef(canvas);
-      canvasRef.current = canvas;
-    },
-    [surfaceRef],
-  );
-
-  useLayoutEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext('2d');
-    if (!context) return;
-    const renderer = createCanvasRenderer(context, {
-      viewport: VIEWPORT,
-      dpr: window.devicePixelRatio || 1,
-    });
-    renderer.render(controller.getStrokes());
-    rendererRef.current = renderer;
-    return () => {
-      rendererRef.current = null;
-    };
-  }, [controller]);
-
-  useEffect(
-    () =>
-      controller.subscribe(() => rendererRef.current?.update(controller.getStrokes()), {
-        events: 'all',
-      }),
-    [controller],
-  );
-
-  useEffect(() => {
-    controller.setStrokeStyle({ color: strokeColor, width: strokeWidth });
-  }, [controller, strokeColor, strokeWidth]);
 
   return (
     <div className="pad-widget">
@@ -58,15 +29,15 @@ export function InteractivePad() {
         Draw with a mouse, touch, or stylus. Use undo, redo, and clear to edit. Color and width
         apply to the next stroke.
       </p>
-      <canvas
-        ref={attachCanvas}
+      <SignaturePad
+        ref={padRef}
         className="pad-canvas"
-        width={VIEWPORT.width}
-        height={VIEWPORT.height}
+        viewport={VIEWPORT}
+        stroke={{ color: strokeColor, width: strokeWidth }}
         tabIndex={0}
         aria-label="Signature drawing area"
         aria-describedby={ids + '-help ' + ids + '-status'}
-        {...surfaceProps}
+        onSnapshot={setSnapshot}
       />
       <div className="pad-toolbar">
         <div className="pad-actions" role="group" aria-label="Signature actions">
@@ -75,7 +46,7 @@ export function InteractivePad() {
               type="button"
               className="pad-icon-button"
               aria-label="Undo"
-              onClick={() => controller.undo()}
+              onClick={() => padRef.current?.undo()}
               disabled={!snapshot.canUndo}
             >
               <Undo aria-hidden="true" size={15} weight="Outline" />
@@ -86,7 +57,7 @@ export function InteractivePad() {
               type="button"
               className="pad-icon-button"
               aria-label="Redo"
-              onClick={() => controller.redo()}
+              onClick={() => padRef.current?.redo()}
               disabled={!snapshot.canRedo}
             >
               <Redo aria-hidden="true" size={15} weight="Outline" />
@@ -98,7 +69,7 @@ export function InteractivePad() {
               className="pad-icon-button"
               aria-label="Clear"
               onClick={() => {
-                controller.clear();
+                padRef.current?.clear();
                 setMessage('Signature cleared.');
               }}
               disabled={snapshot.isEmpty}

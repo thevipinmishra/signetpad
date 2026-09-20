@@ -79,4 +79,20 @@ describe('createSignaturePadAction', () => {
     expect(controller.getViewport()).toEqual({ width: 360, height: 140 });
     binding.destroy();
   });
+
+  it('exposes a snapshot store that tracks undo state', () => {
+    const { controller, snapshot } = createSignaturePadAction({
+      viewport: { width: 200, height: 100 },
+      behavior: { smoothing: 0, minDistance: 0, allowDots: true },
+    });
+    const values: boolean[] = [];
+    const stop = snapshot.subscribe((next) => values.push(next.isEmpty));
+
+    controller.begin({ x: 10, y: 10, time: 1 });
+    controller.end();
+
+    expect(values.at(0)).toBe(true);
+    expect(values.at(-1)).toBe(false);
+    stop();
+  });
 });

@@ -316,13 +316,24 @@ export function createSignaturePad(options: SignaturePadOptions = {}): Signature
     },
 
     setViewport(nextViewport) {
-      viewport = validateViewport(nextViewport);
+      const next = validateViewport(nextViewport);
+      if (next.width === viewport.width && next.height === viewport.height) return;
+      viewport = next;
       emit();
     },
 
     setStrokeStyle(nextStyle) {
       const next = { ...style, ...nextStyle };
       validateStyle(next);
+      if (
+        next.color === style.color &&
+        next.width === style.width &&
+        next.opacity === style.opacity &&
+        next.cap === style.cap &&
+        next.join === style.join
+      ) {
+        return;
+      }
       style = next;
       emit();
     },
@@ -330,6 +341,13 @@ export function createSignaturePad(options: SignaturePadOptions = {}): Signature
     setBehavior(nextBehavior) {
       const next = { ...behavior, ...nextBehavior };
       validateBehavior(next);
+      if (
+        next.minDistance === behavior.minDistance &&
+        next.smoothing === behavior.smoothing &&
+        next.allowDots === behavior.allowDots
+      ) {
+        return;
+      }
       behavior = next;
       emit();
     },

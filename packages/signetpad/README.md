@@ -30,48 +30,38 @@ Most signature pad libraries bind capture, drawing, and export to one canvas. Si
 | Import                       | Use it for                                                      |
 | ---------------------------- | --------------------------------------------------------------- |
 | `signetpad`                  | Headless controller, history, validation, `toData()`, `toSvg()` |
-| `signetpad/react`            | React, Next.js, Remix, Vite, and Astro pointer adapter          |
-| `signetpad/vue`              | Vue 3 and Nuxt composable                                       |
-| `signetpad/svelte`           | Svelte and SvelteKit action                                     |
-| `signetpad/react-native`     | React Native PanResponder adapter                               |
-| `signetpad/canvas`           | Canvas 2D renderer and PNG, JPEG, or WebP export                |
-| `signetpad/react-native-svg` | React Native SVG renderer                                       |
+| `signetpad/react`            | React `SignaturePad` plus the headless `useSignaturePad` hook   |
+| `signetpad/vue`              | Vue `SignaturePad` plus the composable                          |
+| `signetpad/svelte`           | Svelte action that paints a canvas for you                      |
+| `signetpad/react-native`     | React Native PanResponder hook                                  |
+| `signetpad/react-native-svg` | Native `SignaturePad` plus `SignatureSvg`                       |
+| `signetpad/canvas`           | Canvas 2D renderer (used internally by the web `SignaturePad`)  |
 
 `sideEffects` is `false`. Importing `signetpad/react` does not load Vue, Svelte, or React Native.
 
 ## React signature pad
 
 ```tsx
-import { useLayoutEffect, useRef } from 'react';
-import { useSignaturePad } from 'signetpad/react';
-import { createCanvasRenderer } from 'signetpad/canvas';
-
-const viewport = { width: 600, height: 240 };
+import { SignaturePad } from 'signetpad/react';
 
 export function SignatureField() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { controller, snapshot, surfaceRef, surfaceProps } = useSignaturePad({ viewport });
+  return <SignaturePad aria-label="Agreement signature" />;
+}
+```
 
-  useLayoutEffect(() => {
-    const context = canvasRef.current?.getContext('2d');
-    if (!context) return;
-    const renderer = createCanvasRenderer(context, { viewport, dpr: devicePixelRatio });
-    renderer.render(controller.getStrokes());
-    return controller.subscribe(() => renderer.update(controller.getStrokes()), { events: 'all' });
-  }, [controller]);
+Add undo without assembling a renderer:
+
+```tsx
+import { useRef } from 'react';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
+
+export function SignatureField() {
+  const padRef = useRef<SignaturePadHandle>(null);
 
   return (
     <>
-      <canvas
-        ref={(node) => {
-          canvasRef.current = node;
-          surfaceRef(node);
-        }}
-        style={{ touchAction: 'none' }}
-        aria-label="Signature input"
-        {...surfaceProps}
-      />
-      <button type="button" disabled={!snapshot.canUndo} onClick={() => controller.undo()}>
+      <SignaturePad ref={padRef} aria-label="Agreement signature" />
+      <button type="button" onClick={() => padRef.current?.undo()}>
         Undo
       </button>
     </>
@@ -85,22 +75,11 @@ Works in React 18+, Next.js client components, Remix, Vite, and Astro islands.
 
 ```vue
 <script setup lang="ts">
-import { useSignaturePad } from 'signetpad/vue';
-
-const { controller, snapshot, surfaceProps } = useSignaturePad({
-  viewport: { width: 600, height: 240 },
-});
+import { SignaturePad } from 'signetpad/vue';
 </script>
 
 <template>
-  <canvas
-    v-bind="surfaceProps"
-    width="600"
-    height="240"
-    style="touch-action: none"
-    aria-label="Signature input"
-  />
-  <button type="button" :disabled="!snapshot.canUndo" @click="controller.undo()">Undo</button>
+  <SignaturePad aria-label="Agreement signature" />
 </template>
 ```
 
@@ -110,32 +89,22 @@ const { controller, snapshot, surfaceProps } = useSignaturePad({
 <script lang="ts">
   import { createSignaturePadAction } from 'signetpad/svelte';
 
-  const { action: signaturePadAction, controller } = createSignaturePadAction({
-    viewport: { width: 600, height: 240 },
-  });
+  const { action, controller, snapshot } = createSignaturePadAction();
 </script>
 
-<canvas use:signaturePadAction style="touch-action: none" aria-label="Signature input" />
-<button type="button" on:click={() => controller.undo()}>Undo</button>
+<canvas use:action aria-label="Agreement signature"></canvas>
+<button type="button" disabled={!$snapshot.canUndo} on:click={() => controller.undo()}>
+  Undo
+</button>
 ```
 
 ## React Native signature pad
 
 ```tsx
-import { View } from 'react-native';
-import { useSignaturePad } from 'signetpad/react-native';
-import { SignatureSvg } from 'signetpad/react-native-svg';
+import { SignaturePad } from 'signetpad/react-native-svg';
 
 export function SignatureField() {
-  const { controller, panHandlers } = useSignaturePad({
-    viewport: { width: 360, height: 180 },
-  });
-
-  return (
-    <View {...panHandlers} accessible accessibilityLabel="Signature drawing area">
-      <SignatureSvg pad={controller} />
-    </View>
-  );
+  return <SignaturePad accessibilityLabel="Agreement signature" />;
 }
 ```
 
@@ -143,15 +112,25 @@ export function SignatureField() {
 
 ## Save, restore, and export
 
-```ts
-import { createSignaturePad } from 'signetpad';
+```tsx
+import { useRef } from 'react';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
 
-const pad = createSignaturePad({ viewport: { width: 600, height: 240 } });
-const data = pad.toData();
-const svg = pad.toSvg({ background: '#ffffff' });
+export function SignatureField() {
+  const padRef = useRef<SignaturePadHandle>(null);
+
+  function persist() {
+    const data = padRef.current?.toData();
+    const svg = padRef.current?.toSvg({ background: '#ffffff' });
+    const png = padRef.current?.toDataURL({ type: 'image/png' });
+    return { data, svg, png };
+  }
+
+  return <SignaturePad ref={padRef} aria-label="Agreement signature" />;
+}
 ```
 
-Keep `toData()` as the source of truth. Use `signetpad/canvas` when a browser must download PNG, JPEG, or WebP.
+Keep `toData()` as the source of truth. Use `toSvg()` when you need a portable image without a browser encoder.
 
 ## Tree shaking
 
@@ -167,12 +146,12 @@ Do not import from a barrel of every adapter. There is no `signetpad/all` on pur
 
 ## Docs and examples
 
-- [Getting started](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/getting-started.md)
-- [React](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/react.md)
-- [Vue](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/vue.md)
-- [SvelteKit](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/sveltekit.md)
-- [React Native](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/react-native.md)
-- [API](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/api.md)
+- [Getting started](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/getting-started.mdx)
+- [React](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/react.mdx)
+- [Vue](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/vue.mdx)
+- [SvelteKit](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/sveltekit.mdx)
+- [React Native](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/react-native.mdx)
+- [API](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/api.mdx)
 
 ## License
 

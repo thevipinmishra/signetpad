@@ -1,11 +1,39 @@
 ---
 title: SignetPad API reference
-description: Controller methods, SignatureData, snapshots, and options for the SignetPad TypeScript signature pad.
+description: SignaturePad handles, controller methods, SignatureData, snapshots, and options.
 section: reference
 order: 40
 ---
 
+import { LivePreview } from '../../components/LivePreview.tsx';
+
+## SignaturePad handle
+
+The ready-made components return this handle from a ref. Methods match the core controller, plus canvas image helpers on web.
+
+<LivePreview client:load example="history" />
+
+```ts
+type SignaturePadHandle = {
+  controller: SignaturePad;
+  snapshot: SignatureSnapshot;
+  undo(): boolean;
+  redo(): boolean;
+  clear(): boolean;
+  reset(): void;
+  toData(): SignatureData;
+  loadData(data: SignatureData, options?: { resetHistory?: boolean }): void;
+  toSvg(options?: SignatureSvgOptions): string;
+  toDataURL?(options?: { type?: string; quality?: number }): string;
+  toBlob?(options?: { type?: string; quality?: number }): Promise<Blob>;
+};
+```
+
+`toDataURL` and `toBlob` exist on the React and Vue canvas components. React Native uses `toSvg()` or a custom encoder.
+
 ## Controller methods
+
+Use these when you build a custom surface with `useSignaturePad` or `createSignaturePad`.
 
 | Method                                   | Purpose                                                |
 | ---------------------------------------- | ------------------------------------------------------ |
@@ -48,8 +76,7 @@ type SignatureSnapshot = {
 };
 ```
 
-`subscribe(listener)` notifies on semantic changes. Pass `{ events: 'all' }` when a renderer
-needs every captured point.
+`onSnapshot` on `SignaturePad` (and `subscribe(listener)` on the controller) notifies on semantic changes. Pass `{ events: 'all' }` to `subscribe` when a custom renderer needs every captured point.
 
 ## Options
 
@@ -61,11 +88,10 @@ createSignaturePad({
 });
 ```
 
-Framework adapters accept the same options plus `enabled` and, on web, `preventDefault`.
-`controller` is the documented name for the returned pad; `pad` is kept as an alias.
+`SignaturePad` and the framework hooks accept the same options plus `enabled` and, on web, `preventDefault`. `controller` is the documented name for the returned pad; `pad` is kept as an alias.
 
 ## Defaults
 
-The default viewport is `600 × 240`, the stroke is a `2px` round dark line, smoothing is `0.35`, and tap dots are kept. Pass only the values you want to change; the types stay narrowed all the way through.
+The default viewport is 600 × 240, the stroke is a 2px round dark line, smoothing is 0.35, and tap dots are kept. Pass only the values you want to change.
 
-SignetPad is ESM-only. Import from `signetpad` for the controller and from a dedicated subpath for adapters and renderers. Node-based tooling needs Node.js 18.17 or newer.
+SignetPad is ESM-only. Import from `signetpad` for the controller and from a dedicated subpath for adapters and components. Node-based tooling needs Node.js 18.17 or newer.

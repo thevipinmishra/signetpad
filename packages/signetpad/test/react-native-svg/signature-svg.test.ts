@@ -9,7 +9,7 @@ vi.mock('react-native-svg', () => ({
   default: 'svg',
 }));
 
-const { SignatureSvg } = await import('../../src/react-native-svg/index.js');
+const { SignatureSvg } = await import('../../src/react-native-svg/signature-svg.js');
 
 const style = {
   color: '#102935',

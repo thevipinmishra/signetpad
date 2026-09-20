@@ -1,0 +1,154 @@
+---
+title: React signature pad
+description: Add a complete SignetPad field in React, then layer undo, stroke style, and snapshots without extra renderer code.
+section: integrations
+order: 31
+---
+
+import { LivePreview } from '../../components/LivePreview.tsx';
+
+Every snippet on this page is a full component. You do not need a previous example, a shared `controller` variable, or a manual Canvas renderer.
+
+## Install
+
+```bash
+pnpm add signetpad
+```
+
+## Draw
+
+<LivePreview client:load example="draw" />
+
+```tsx
+import { SignaturePad } from 'signetpad/react';
+
+export function SignatureField() {
+  return <SignaturePad aria-label="Agreement signature" />;
+}
+```
+
+`SignaturePad` sets `touch-action: none`, sizes the canvas from the default 600×240 viewport, and keeps pixels in sync while someone draws.
+
+## Undo, redo, and clear
+
+Hold a ref to the pad. The handle talks to the same controller used by Vue, Svelte, and React Native.
+
+<LivePreview client:load example="history" />
+
+```tsx
+import { useRef, useState } from 'react';
+import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
+import type { SignatureSnapshot } from 'signetpad';
+
+export function SignatureField() {
+  const padRef = useRef<SignaturePadHandle>(null);
+  const [snapshot, setSnapshot] = useState<SignatureSnapshot | null>(null);
+
+  return (
+    <div>
+      <SignaturePad ref={padRef} aria-label="Agreement signature" onSnapshot={setSnapshot} />
+      <button type="button" onClick={() => padRef.current?.undo()} disabled={!snapshot?.canUndo}>
+        Undo
+      </button>
+      <button type="button" onClick={() => padRef.current?.redo()} disabled={!snapshot?.canRedo}>
+        Redo
+      </button>
+      <button type="button" onClick={() => padRef.current?.clear()} disabled={snapshot?.isEmpty}>
+        Clear
+      </button>
+    </div>
+  );
+}
+```
+
+## Change color and width
+
+Style props apply to the **next** stroke. Existing strokes stay as they were drawn.
+
+<LivePreview client:load example="stroke" />
+
+```tsx
+import { useState } from 'react';
+import { SignaturePad } from 'signetpad/react';
+
+export function SignatureField() {
+  const [color, setColor] = useState('#102935');
+  const [width, setWidth] = useState(3);
+
+  return (
+    <div>
+      <SignaturePad aria-label="Styled signature" stroke={{ color, width }} />
+      <input type="color" value={color} onChange={(event) => setColor(event.target.value)} />
+      <input
+        type="range"
+        min={1}
+        max={8}
+        step={0.5}
+        value={width}
+        onChange={(event) => setWidth(Number(event.target.value))}
+      />
+    </div>
+  );
+}
+```
+
+## Disable drawing
+
+<LivePreview client:load example="disabled" />
+
+```tsx
+import { useState } from 'react';
+import { SignaturePad } from 'signetpad/react';
+
+export function SignatureField() {
+  const [enabled, setEnabled] = useState(true);
+
+  return (
+    <div>
+      <SignaturePad aria-label="Signature input" enabled={enabled} />
+      <button type="button" onClick={() => setEnabled((value) => !value)}>
+        {enabled ? 'Disable drawing' : 'Enable drawing'}
+      </button>
+    </div>
+  );
+}
+```
+
+## Custom renderer
+
+Use the hook only when you are not drawing to a canvas — for example SVG, WebGL, or a remote surface. You still own painting.
+
+```tsx
+import { useSignaturePad } from 'signetpad/react';
+
+export function SignatureField() {
+  const { controller, snapshot, surfaceRef, surfaceProps } = useSignaturePad({
+    viewport: { width: 600, height: 240 },
+  });
+
+  return (
+    <div>
+      <svg
+        ref={surfaceRef}
+        width={600}
+        height={240}
+        style={{ touchAction: 'none' }}
+        aria-label="Signature input"
+        {...surfaceProps}
+      />
+      <p>{snapshot.strokeCount} strokes</p>
+      <button type="button" onClick={() => controller.undo()} disabled={!snapshot.canUndo}>
+        Undo
+      </button>
+    </div>
+  );
+}
+```
+
+## Accessibility checklist
+
+- Give the surface a specific `aria-label` or `aria-labelledby`.
+- Keep a visible focus ring. `SignaturePad` forwards `tabIndex` and other canvas attributes.
+- Provide undo, redo, and clear with disabled states from `onSnapshot`.
+- Offer a typed-name alternative when drawing is not practical.
+- Announce saves with a polite live region.
