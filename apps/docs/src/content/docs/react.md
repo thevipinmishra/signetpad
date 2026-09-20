@@ -24,12 +24,13 @@ return (
     width={600}
     height={240}
     tabIndex={0}
+    style={{ touchAction: 'none' }}
     aria-label="Signature input"
   />
 );
 ```
 
-The hook owns the controller for the lifetime of the component and keeps `snapshot` reactive. Use the controller for commands and subscribe separately when your renderer needs point-level updates.
+The hook owns the controller for the lifetime of the component and keeps `snapshot` reactive. Use the controller for commands and subscribe separately when your renderer needs point-level updates. `enabled` and `preventDefault` stay live; call `setViewport`, `setStrokeStyle`, or `setBehavior` to change capture settings after mount.
 
 ## Render with Canvas
 

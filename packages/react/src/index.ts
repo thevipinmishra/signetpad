@@ -31,7 +31,9 @@ export interface SignatureSurfaceProps {
 }
 
 export interface UseSignaturePadResult {
+  /** Preferred name for the shared signature controller. */
   controller: SignaturePad;
+  /** Alias of `controller`, kept for shorter call sites. */
   pad: SignaturePad;
   snapshot: SignatureSnapshot;
   surfaceRef: RefCallback<HTMLElement>;
@@ -68,6 +70,8 @@ function toInputPoint(
 
 /**
  * Connects a DOM pointer surface to the headless signature controller.
+ * `enabled` and `preventDefault` stay live; viewport, stroke, and behavior are
+ * initial values — call `controller.setViewport`, `setStrokeStyle`, or `setBehavior` later.
  * Rendering and accessibility props remain the consumer's responsibility.
  */
 export function useSignaturePad(options: UseSignaturePadOptions = {}): UseSignaturePadResult {

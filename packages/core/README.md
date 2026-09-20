@@ -3,6 +3,16 @@
 The framework-agnostic controller behind SignetPad. It records normalized points, keeps
 per-stroke history, validates loaded data, and returns portable vector payloads.
 
+[Docs](https://signetpad.dev/docs/api) · [GitHub](https://github.com/thevipinmishra/signetpad)
+
+## Install
+
+```sh
+pnpm add @signetpad/core
+```
+
+This package is ESM-only.
+
 ## Capture points
 
 ```ts
@@ -40,3 +50,7 @@ PNG, JPEG, WebP, or `Blob` export.
 
 The core does not create a surface or draw pixels. Connect an input adapter, then render
 `pad.getStrokes()` with Canvas, SVG, Skia, PDF, or your own renderer.
+
+## License
+
+MIT

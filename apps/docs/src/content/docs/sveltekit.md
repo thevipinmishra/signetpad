@@ -19,7 +19,7 @@ pnpm add @signetpad/svelte
   const { action: signaturePadAction, controller } = createSignaturePadAction({ viewport: { width: 600, height: 240 } });
 </script>
 
-<canvas use:signaturePadAction aria-label="Signature input" />
+<canvas use:signaturePadAction style="touch-action: none" aria-label="Signature input" />
 <button type="button" on:click={() => controller.clear()}>Clear</button>
 ```
 

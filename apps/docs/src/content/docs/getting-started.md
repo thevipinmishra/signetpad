@@ -37,6 +37,7 @@ export function SignatureField() {
     const context = canvasRef.current?.getContext('2d');
     if (!context) return;
     const renderer = createCanvasRenderer(context, { viewport, dpr: devicePixelRatio });
+    renderer.render(controller.getStrokes());
     return controller.subscribe(() => renderer.update(controller.getStrokes()), { events: 'all' });
   }, [controller]);
 
@@ -46,6 +47,7 @@ export function SignatureField() {
         canvasRef.current = node;
         surfaceRef(node);
       }}
+      style={{ touchAction: 'none' }}
       {...surfaceProps}
       aria-label="Signature input"
     />
@@ -54,7 +56,8 @@ export function SignatureField() {
 ```
 
 `surfaceProps` handles pointer input only. Add the label, instructions, focus treatment,
-undo/redo controls, and typed fallback that belong in your product.
+undo/redo controls, and typed fallback that belong in your product. Set `touch-action: none`
+on the drawing surface so mobile browsers do not scroll while someone is signing.
 
 ## Save and restore
 

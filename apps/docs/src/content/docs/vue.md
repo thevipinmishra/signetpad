@@ -22,9 +22,17 @@ const { controller, snapshot, surfaceProps } = useSignaturePad({
 </script>
 
 <template>
-  <canvas v-bind="surfaceProps" width="600" height="240" aria-label="Signature input" />
+  <canvas
+    v-bind="surfaceProps"
+    width="600"
+    height="240"
+    style="touch-action: none"
+    aria-label="Signature input"
+  />
   <button type="button" :disabled="!snapshot.canUndo" @click="controller.undo()">Undo</button>
 </template>
 ```
 
-`surfaceProps` includes a callback ref and Vue’s `onPointer*` event bindings. In Nuxt, place this component behind `<ClientOnly>` when the page is server rendered.
+`surfaceProps` includes a callback ref and Vue’s `onPointer*` event bindings. If you pass a
+reactive options object, `enabled` and `preventDefault` are read on each event. In Nuxt, place
+this component behind `<ClientOnly>` when the page is server rendered.

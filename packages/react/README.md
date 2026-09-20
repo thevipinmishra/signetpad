@@ -3,6 +3,20 @@
 A typed hook that maps DOM Pointer Events to `@signetpad/core`. It works in React, Next.js,
 Remix, Vite, and React islands.
 
+[Docs](https://signetpad.dev/docs/react) · [GitHub](https://github.com/thevipinmishra/signetpad)
+
+## Install
+
+```sh
+pnpm add @signetpad/react @signetpad/renderer-canvas
+```
+
+Peer dependency: `react` >= 18. This package is ESM-only.
+
+`enabled` and `preventDefault` stay live across renders. Viewport, stroke style, and behavior
+are initial values; call `controller.setViewport`, `setStrokeStyle`, or `setBehavior` to change
+them later. `controller` is the preferred name; `pad` is an alias.
+
 ## Connect a canvas surface
 
 ```tsx
@@ -32,8 +46,9 @@ export function SignatureField() {
           canvasRef.current = node;
           surfaceRef(node);
         }}
-        {...surfaceProps}
+        style={{ touchAction: 'none' }}
         aria-label="Signature input"
+        {...surfaceProps}
       />
       <button type="button" disabled={!snapshot.canUndo} onClick={() => controller.undo()}>
         Undo
@@ -45,3 +60,7 @@ export function SignatureField() {
 
 `surfaceProps` handles input. Your component supplies the label, instructions, focus treatment,
 action buttons, and typed fallback.
+
+## License
+
+MIT

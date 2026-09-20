@@ -14,7 +14,9 @@ export interface UseSignaturePadOptions extends SignaturePadOptions {
 }
 
 export interface UseSignaturePadResult {
+  /** Preferred name for the shared signature controller. */
   controller: SignaturePad;
+  /** Alias of `controller`, kept for shorter call sites. */
   pad: SignaturePad;
   snapshot: SignatureSnapshot;
   panHandlers: PanResponderInstance['panHandlers'];

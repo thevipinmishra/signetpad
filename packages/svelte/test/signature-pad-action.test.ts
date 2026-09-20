@@ -66,4 +66,17 @@ describe('createSignaturePadAction', () => {
     expect(controller.getSnapshot().isEmpty).toBe(true);
     binding.destroy();
   });
+
+  it('updates the controller viewport from the action', () => {
+    const { action, controller } = createSignaturePadAction({
+      viewport: { width: 200, height: 100 },
+    });
+    const surface = document.createElement('div');
+    const binding = action(surface);
+
+    binding.update?.({ viewport: { width: 360, height: 140 } });
+
+    expect(controller.getViewport()).toEqual({ width: 360, height: 140 });
+    binding.destroy();
+  });
 });

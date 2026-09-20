@@ -82,4 +82,21 @@ describe('createCanvasRenderer', () => {
     );
     await expect(renderer.toBlob({ type: 'image/png' })).resolves.toBeInstanceOf(Blob);
   });
+
+  it('redraws from scratch when stroke history is not append-only', () => {
+    const { context, calls } = createContext();
+    const renderer = createCanvasRenderer(context, { viewport: { width: 100, height: 50 } });
+
+    renderer.render([
+      stroke([
+        { x: 10, y: 20, time: 0 },
+        { x: 30, y: 20, time: 1 },
+      ]),
+    ]);
+    calls.length = 0;
+    renderer.update([stroke([{ x: 4, y: 5, time: 2 }])]);
+
+    expect(calls).toContain('clearRect');
+    expect(calls).toContain('arc');
+  });
 });

@@ -39,8 +39,12 @@ function useLiveStrokes(pad: SignaturePad | undefined): ReadonlyArray<SignatureS
   );
 
   useEffect(() => {
-    if (!pad) return;
+    if (!pad) {
+      setStrokes([]);
+      return;
+    }
 
+    setStrokes(pad.getStrokes());
     return pad.subscribe(() => setStrokes(pad.getStrokes()));
   }, [pad]);
 

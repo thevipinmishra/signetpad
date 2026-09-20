@@ -139,4 +139,113 @@ describe('createSignaturePad', () => {
       }),
     ).toThrow('Unsupported stroke cap');
   });
+
+  it('cancels an in-progress stroke and restores redo history', () => {
+    const pad = createSignaturePad({ createStrokeId: () => 'kept' });
+    pad.begin({ x: 0, y: 0 });
+    pad.end();
+    pad.undo();
+
+    pad.begin({ x: 4, y: 5 });
+    pad.move({ x: 20, y: 20 });
+    expect(pad.cancel()).toBe(true);
+    expect(pad.getSnapshot()).toMatchObject({
+      isEmpty: true,
+      isDrawing: false,
+      canRedo: true,
+    });
+    expect(pad.redo()).toBe(true);
+    expect(pad.getSnapshot().strokeCount).toBe(1);
+  });
+
+  it('clear is undoable and reset forgets history', () => {
+    const pad = createSignaturePad();
+    pad.begin({ x: 1, y: 1 });
+    pad.end();
+
+    expect(pad.clear()).toBe(true);
+    expect(pad.getSnapshot().isEmpty).toBe(true);
+    expect(pad.undo()).toBe(true);
+    expect(pad.getSnapshot().strokeCount).toBe(1);
+
+    pad.reset();
+    expect(pad.getSnapshot()).toMatchObject({
+      isEmpty: true,
+      canUndo: false,
+      canRedo: false,
+    });
+  });
+
+  it('rejects invalid input, styles, and stored data', () => {
+    const pad = createSignaturePad();
+
+    expect(() => pad.begin({ x: Number.NaN, y: 0 })).toThrow('point.x');
+    expect(() => pad.setViewport({ width: -1, height: 10 })).toThrow('cannot be negative');
+    expect(() => pad.setStrokeStyle({ opacity: 2 })).toThrow('stroke.opacity');
+    expect(() => pad.setBehavior({ smoothing: 4 })).toThrow('behavior.smoothing');
+    expect(() =>
+      pad.loadData({
+        version: 2 as never,
+        viewport: { width: 10, height: 10 },
+        strokes: [],
+      }),
+    ).toThrow('Unsupported signature data version');
+    expect(() =>
+      pad.loadData({
+        version: 1,
+        viewport: { width: 10, height: 10 },
+        strokes: [
+          {
+            id: '',
+            points: [{ x: 1, y: 1, time: 1 }],
+            style: { color: 'black', width: 1, opacity: 1, cap: 'round', join: 'round' },
+          },
+        ],
+      }),
+    ).toThrow('Every stroke must have an id');
+  });
+
+  it('escapes SVG attributes and can keep history when loading data', () => {
+    const pad = createSignaturePad({
+      viewport: { width: 40, height: 20 },
+      stroke: { color: 'red"><script>', width: 2 },
+    });
+    pad.begin({ x: 1, y: 2 });
+    pad.end();
+
+    expect(pad.toSvg({ background: 'white"><img' })).toContain('fill="white&quot;&gt;&lt;img"');
+    expect(pad.toSvg()).toContain('fill="red&quot;&gt;&lt;script&gt;"');
+
+    pad.loadData(
+      {
+        version: 1,
+        viewport: { width: 8, height: 8 },
+        strokes: [],
+      },
+      { resetHistory: false },
+    );
+    expect(pad.getSnapshot().canUndo).toBe(true);
+
+    const replaced = createSignaturePad();
+    replaced.begin({ x: 1, y: 1 });
+    replaced.end();
+    replaced.loadData({
+      version: 1,
+      viewport: { width: 8, height: 8 },
+      strokes: [],
+    });
+    expect(replaced.getSnapshot().canUndo).toBe(false);
+  });
+
+  it('updates viewport, style, and behavior after creation', () => {
+    const pad = createSignaturePad();
+    pad.setViewport({ width: 320, height: 120 });
+    pad.setStrokeStyle({ color: '#ff0000', width: 5 });
+    pad.setBehavior({ minDistance: 0, smoothing: 0, allowDots: true });
+    pad.begin({ x: 1, y: 1 });
+    pad.end();
+
+    expect(pad.getViewport()).toEqual({ width: 320, height: 120 });
+    expect(pad.toData().strokes[0]?.style).toMatchObject({ color: '#ff0000', width: 5 });
+  });
 });

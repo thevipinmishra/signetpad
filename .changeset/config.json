@@ -1,0 +1,21 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.2/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [
+    [
+      "@signetpad/core",
+      "@signetpad/react",
+      "@signetpad/react-native",
+      "@signetpad/vue",
+      "@signetpad/svelte",
+      "@signetpad/renderer-canvas",
+      "@signetpad/renderer-react-native-svg"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": ["@signetpad/docs", "@signetpad/examples"]
+}

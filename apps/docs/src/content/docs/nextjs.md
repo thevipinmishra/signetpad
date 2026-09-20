@@ -13,7 +13,14 @@ import { useSignaturePad } from '@signetpad/react';
 
 export function SignatureField() {
   const { surfaceRef, surfaceProps } = useSignaturePad({ viewport: { width: 600, height: 240 } });
-  return <canvas ref={surfaceRef} {...surfaceProps} aria-label="Signature input" />;
+  return (
+    <canvas
+      ref={surfaceRef}
+      style={{ touchAction: 'none' }}
+      {...surfaceProps}
+      aria-label="Signature input"
+    />
+  );
 }
 ```
 

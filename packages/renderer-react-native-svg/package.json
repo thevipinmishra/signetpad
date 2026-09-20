@@ -2,14 +2,38 @@
   "name": "@signetpad/renderer-react-native-svg",
   "version": "0.1.0",
   "description": "React Native SVG renderer for @signetpad/core.",
+  "author": {
+    "name": "Vipin Mishra",
+    "email": "thevipinmishra@gmail.com",
+    "url": "https://github.com/thevipinmishra"
+  },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thevipinmishra/signetpad.git",
     "directory": "packages/renderer-react-native-svg"
   },
-  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thevipinmishra/signetpad/issues"
+  },
+  "homepage": "https://signetpad.dev",
+  "keywords": [
+    "signature",
+    "signature-pad",
+    "signetpad",
+    "vector",
+    "canvas",
+    "svg",
+    "typescript",
+    "react-native",
+    "react-native-svg"
+  ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=18.17.0"
   },
   "type": "module",
   "sideEffects": false,
@@ -19,6 +43,7 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "react-native": "./dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -44,7 +69,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "clean": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\"",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   }

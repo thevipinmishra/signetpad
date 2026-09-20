@@ -20,9 +20,13 @@ const { controller, snapshot, panHandlers } = useSignaturePad({
 });
 return (
   <View {...panHandlers} accessible accessibilityLabel="Signature drawing area">
-    <SignatureSvg strokes={controller.getStrokes()} />
+    <SignatureSvg pad={controller} />
   </View>
 );
 ```
+
+Pass `pad={controller}` so the SVG redraws while a stroke is in progress. Passing
+`strokes={controller.getStrokes()}` only updates when React re-renders, which misses point-level
+moves.
 
 The adapter uses React Native’s built-in `PanResponder`, so it does not force a gesture library on your app. The SVG renderer is optional; Skia or a native drawing surface can consume `controller.getStrokes()` just as easily.

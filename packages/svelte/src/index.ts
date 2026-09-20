@@ -101,6 +101,7 @@ export function createSignaturePadAction(options: SignaturePadActionOptions = {}
         preventDefault = next.preventDefault ?? preventDefault;
         if (next.stroke) controller.setStrokeStyle(next.stroke);
         if (next.behavior) controller.setBehavior(next.behavior);
+        if (next.viewport) controller.setViewport(next.viewport);
       },
       destroy() {
         node.removeEventListener('pointerdown', onPointerDown);

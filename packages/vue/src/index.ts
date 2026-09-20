@@ -25,7 +25,9 @@ export interface SignatureSurfaceProps {
 }
 
 export interface UseSignaturePadResult {
+  /** Preferred name for the shared signature controller. */
   controller: SignaturePad;
+  /** Alias of `controller`, kept for shorter call sites. */
   pad: SignaturePad;
   snapshot: Readonly<Ref<SignatureSnapshot>>;
   surfaceRef: (element: HTMLElement | null) => void;
@@ -55,19 +57,20 @@ function toInputPoint(event: PointerEvent, element: HTMLElement, pad: SignatureP
   };
 }
 
-/** Connect a Vue template element to the framework-agnostic signature controller. */
+/**
+ * Connect a Vue template element to the framework-agnostic signature controller.
+ * `enabled` and `preventDefault` are read from the same options object on each event,
+ * so a reactive options bag stays live. Viewport, stroke, and behavior are initial values.
+ */
 export function useSignaturePad(options: UseSignaturePadOptions = {}): UseSignaturePadResult {
-  const {
-    preventDefault: preventDefaultOption = true,
-    enabled: enabledOption = true,
-    ...padOptions
-  } = options;
+  const { preventDefault: _preventDefault, enabled: _enabled, ...padOptions } = options;
   const pad = createSignaturePad(padOptions);
   const snapshot = shallowRef(pad.getSnapshot());
   let element: HTMLElement | null = null;
   let activePointerId: number | null = null;
-  let enabled = enabledOption;
-  let preventDefault = preventDefaultOption;
+
+  const isEnabled = (): boolean => options.enabled ?? true;
+  const shouldPreventDefault = (): boolean => options.preventDefault ?? true;
 
   const unsubscribe = pad.subscribe(
     () => {
@@ -82,7 +85,7 @@ export function useSignaturePad(options: UseSignaturePadOptions = {}): UseSignat
 
   const finish = (event: PointerEvent, cancelled: boolean): void => {
     if (activePointerId !== event.pointerId) return;
-    if (preventDefault) event.preventDefault();
+    if (shouldPreventDefault()) event.preventDefault();
     if (cancelled) pad.cancel();
     else pad.end();
     if (
@@ -97,8 +100,8 @@ export function useSignaturePad(options: UseSignaturePadOptions = {}): UseSignat
   const surfaceProps: SignatureSurfaceProps = {
     ref: surfaceRef,
     onPointerdown: (event) => {
-      if (!enabled || activePointerId !== null || !element) return;
-      if (preventDefault) event.preventDefault();
+      if (!isEnabled() || activePointerId !== null || !element) return;
+      if (shouldPreventDefault()) event.preventDefault();
       if (!pad.begin(toInputPoint(event, element, pad))) return;
       activePointerId = event.pointerId;
       const target = event.currentTarget;
@@ -106,7 +109,7 @@ export function useSignaturePad(options: UseSignaturePadOptions = {}): UseSignat
     },
     onPointermove: (event) => {
       if (activePointerId !== event.pointerId || !element) return;
-      if (preventDefault) event.preventDefault();
+      if (shouldPreventDefault()) event.preventDefault();
       pad.move(toInputPoint(event, element, pad));
     },
     onPointerup: (event) => finish(event, false),

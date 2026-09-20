@@ -80,4 +80,28 @@ describe('useSignaturePad', () => {
     expect(result.snapshot.value.isEmpty).toBe(true);
     app.unmount();
   });
+
+  it('honors enabled updates on the same options object', () => {
+    const options = {
+      enabled: true,
+      viewport: { width: 200, height: 100 },
+    };
+    let result: UseSignaturePadResult | undefined;
+    const host = document.createElement('div');
+    const app = createApp({
+      setup() {
+        result = useSignaturePad(options);
+        return () => h('div');
+      },
+    });
+
+    app.mount(host);
+    const surface = host.firstElementChild as HTMLElement;
+    result!.surfaceRef(surface);
+    options.enabled = false;
+    result!.surfaceProps.onPointerdown(pointerEvent(surface, 2, 12, 12));
+
+    expect(result!.snapshot.value.isEmpty).toBe(true);
+    app.unmount();
+  });
 });
