@@ -10,7 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@astrojs/react": "^6.0.5",
+    "@astrojs/react": "^6.0.6",
     "@fontsource-variable/manrope": "^5.3.0",
     "@fontsource-variable/newsreader": "^5.3.0",
     "signetpad": "workspace:*",
