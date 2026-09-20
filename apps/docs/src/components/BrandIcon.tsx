@@ -4,18 +4,20 @@ import { iconFill } from '../lib/brand-icons.js';
 export function BrandIcon({
   icon,
   label,
-  size = 16,
+  size = 14,
+  decorative = false,
 }: {
   icon: BrandIconData;
-  label: string;
+  label?: string;
   size?: number;
+  decorative?: boolean;
 }) {
   return (
-    <span className="code-language-icon" title={label}>
+    <span className="code-language-icon" title={decorative ? undefined : label}>
       <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" focusable="false">
         <path fill={iconFill(icon.hex)} d={icon.path} />
       </svg>
-      <span className="visually-hidden">{label}</span>
+      {decorative || !label ? null : <span className="visually-hidden">{label}</span>}
     </span>
   );
 }

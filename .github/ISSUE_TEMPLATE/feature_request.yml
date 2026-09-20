@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest an API, adapter, or renderer improvement.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is hard or missing with the current packages?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Keep the core/adapter/renderer split in mind.
+    validations:
+      required: true
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Best layer
+      options:
+        - core
+        - framework adapter
+        - renderer
+        - docs
+        - unsure
+    validations:
+      required: true

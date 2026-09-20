@@ -50,23 +50,22 @@ function enhanceSourceBlock(pre: HTMLPreElement, code: HTMLElement | null) {
 function enhanceInstallBlock(pre: HTMLPreElement, code: HTMLElement | null, source: string) {
   const shell = createCodeBlock('install');
   const tabId = 'install-' + String(++installBlockId);
-  const iconHost = document.createElement('span');
   const tablist = document.createElement('div');
   const tabButtons = new Map<PackageManager, HTMLButtonElement>();
 
-  iconHost.className = 'code-language-icon';
   tablist.className = 'code-tabs';
   tablist.setAttribute('role', 'tablist');
   tablist.setAttribute('aria-label', 'Package manager');
 
-  const { toolbar, copyButton, status } = createToolbar({ iconHost, extra: tablist });
+  const { toolbar, copyButton, status } = createToolbar({ extra: tablist });
 
   PACKAGE_MANAGERS.forEach((manager, index) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.role = 'tab';
+    button.setAttribute('role', 'tab');
     button.id = tabId + '-' + manager;
-    button.textContent = manager;
+    button.innerHTML = renderBrandIcon(packageManagerIcon(manager), 14);
+    button.append(manager);
     button.addEventListener('click', () => writePackageManager(manager));
     button.addEventListener('keydown', (event) => {
       const nextManager = packageManagerFromKey(event.key, index);
@@ -80,10 +79,6 @@ function enhanceInstallBlock(pre: HTMLPreElement, code: HTMLElement | null, sour
   });
 
   const applyManager = (manager: PackageManager) => {
-    const icon = packageManagerIcon(manager);
-    iconHost.title = manager;
-    iconHost.innerHTML =
-      renderBrandIcon(icon) + '<span class="visually-hidden">' + manager + '</span>';
     tabButtons.forEach((button, tabManager) => {
       const selected = tabManager === manager;
       button.classList.toggle('is-active', selected);
@@ -112,12 +107,10 @@ function createCodeBlock(kind: 'source' | 'install') {
 
 function createToolbar({
   icon,
-  iconHost,
   label,
   extra,
 }: {
   icon?: string;
-  iconHost?: HTMLElement;
   label?: string;
   extra?: HTMLElement;
 }) {
@@ -136,9 +129,7 @@ function createToolbar({
   status.setAttribute('role', 'status');
   status.setAttribute('aria-live', 'polite');
 
-  if (iconHost) {
-    meta.append(iconHost);
-  } else if (icon && label) {
+  if (icon && label) {
     const language = document.createElement('span');
     language.className = 'code-language-icon';
     language.title = label;

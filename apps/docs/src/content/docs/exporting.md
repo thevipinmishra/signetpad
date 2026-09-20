@@ -1,6 +1,6 @@
 ---
-title: Export signatures
-description: Keep the editable vector data, then export SVG, PNG, JPEG, or WebP at the edge of your flow.
+title: Export SignetPad signatures
+description: Export SignetPad vector signatures to SVG, or use the Canvas renderer for PNG, JPEG, and WebP downloads.
 section: start
 order: 25
 ---
@@ -9,7 +9,7 @@ SignetPad stores vectors. Keep `toData()` when a signature might need to be rest
 
 ## Create a portable SVG
 
-`toSvg()` is part of `@signetpad/core`, so it works in browsers, servers, and native JavaScript runtimes. The result is a standalone image string with no canvas dependency.
+`toSvg()` ships on the `signetpad` controller, so it works in browsers, servers, and native JavaScript runtimes. The result is a standalone image string with no canvas dependency.
 
 ```ts
 const svg = controller.toSvg({

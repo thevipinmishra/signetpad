@@ -13,9 +13,9 @@ import {
   Trash,
   Undo,
 } from 'reicon-react';
-import { useSignaturePad } from '@signetpad/react';
-import { createCanvasRenderer, type CanvasRenderer } from '@signetpad/renderer-canvas';
-import type { SignatureData } from '@signetpad/core';
+import { useSignaturePad } from 'signetpad/react';
+import { createCanvasRenderer, type CanvasRenderer } from 'signetpad/canvas';
+import type { SignatureData } from 'signetpad';
 
 const VIEWPORT = { width: 720, height: 300 };
 const IMAGE_FORMATS = [
@@ -174,7 +174,7 @@ export function App() {
           <span aria-hidden="true">
             <Pen size={15} />
           </span>
-          signetpad
+          SignetPad
         </a>
         <p>
           <Code aria-hidden="true" size={15} weight="Outline" />

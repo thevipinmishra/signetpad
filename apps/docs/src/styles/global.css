@@ -213,7 +213,7 @@ button:disabled {
 .header-cta:active,
 .button:active,
 .code-copy:active,
-.demo-controls button:active {
+.pad-icon-button:active {
   transform: scale(0.96);
 }
 
@@ -311,37 +311,154 @@ button:disabled {
   min-width: 0;
 }
 
-.demo-shell {
-  padding: 1rem;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 1.1rem;
+.pad-widget {
+  padding: 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.95rem;
   background: var(--color-surface);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
 }
 
-.demo-topline {
+.docs-pad-panel {
+  margin-block-start: 1.35rem;
+}
+
+.pad-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 0.62rem;
+  background:
+    linear-gradient(rgb(16 41 53 / 2%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(16 41 53 / 2%) 1px, transparent 1px), #fcfdfb;
+  background-size: 1.2rem 1.2rem;
+  touch-action: none;
+}
+
+.pad-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.75rem;
+  margin-block-start: 0.65rem;
+  min-height: 2rem;
+}
+
+.pad-actions,
+.pad-style {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 0.05rem 0.2rem 0.85rem;
-  color: var(--color-ink-faint);
-  font-size: 0.68rem;
+  gap: 0.22rem;
 }
 
-.demo-topline span {
-  display: inline-flex;
+.pad-icon-button,
+.pad-swatch,
+.pad-custom-color {
+  position: relative;
+  width: 1.85rem;
+  height: 1.85rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 0.42rem;
+  color: var(--color-ink-soft);
+  background: transparent;
+}
+
+.pad-icon-button {
+  display: grid;
+  place-items: center;
+}
+
+.pad-swatch {
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid rgb(16 41 53 / 16%);
+  border-radius: 999px;
+}
+
+.pad-swatch.is-active {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 1px;
+}
+
+.pad-custom-color {
+  display: grid;
+  place-items: center;
+}
+
+.pad-custom-color input {
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.pad-width {
+  display: flex;
   align-items: center;
-  gap: 0.45rem;
-  color: var(--color-success);
-  font-weight: 750;
+  width: 4.75rem;
+  margin-inline-start: 0.2rem;
+}
+
+.pad-width input {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.pad-count {
+  margin-inline-start: auto;
+  color: var(--color-ink-faint);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.pad-icon-button[data-tooltip]::after,
+.pad-swatch[data-tooltip]::after,
+.pad-custom-color[data-tooltip]::after,
+.pad-width[data-tooltip]::after {
+  position: absolute;
+  z-index: 2;
+  inset-block-end: calc(100% + 0.35rem);
+  inset-inline-start: 50%;
+  padding: 0.22rem 0.42rem;
+  border-radius: 0.32rem;
+  color: #fff;
+  background: var(--color-ink);
+  font-size: 0.62rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  content: attr(data-tooltip);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(0.15rem);
+  transition: opacity 120ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (hover: hover) {
+  .pad-icon-button:hover:not(:disabled) {
+    color: var(--color-ink);
+    background: var(--color-surface-muted);
+  }
+
+  .pad-icon-button[data-tooltip]:hover::after,
+  .pad-icon-button[data-tooltip]:focus-visible::after,
+  .pad-swatch[data-tooltip]:hover::after,
+  .pad-custom-color[data-tooltip]:hover::after,
+  .pad-width[data-tooltip]:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 code,
 kbd,
 pre,
 samp,
-.demo-topline code,
 .code-tabs button,
 .docs-prose pre code {
   font-family: var(--font-mono);
@@ -350,85 +467,6 @@ samp,
   font-feature-settings:
     'liga' 0,
     'calt' 0;
-}
-
-.demo-topline code {
-  color: var(--color-ink-faint);
-  font-size: 0.66rem;
-}
-
-.demo-label {
-  max-width: 62ch;
-  margin: 0 0 0.85rem 0.2rem;
-  color: var(--color-ink-soft);
-  font-size: 0.77rem;
-  line-height: 1.5;
-}
-
-.demo-canvas {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--color-border);
-  border-radius: 0.78rem;
-  outline: 1px solid rgb(16 41 53 / 3%);
-  outline-offset: -1px;
-  background:
-    linear-gradient(rgb(16 41 53 / 2%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(16 41 53 / 2%) 1px, transparent 1px), #fcfdfb;
-  background-size: 1.35rem 1.35rem;
-  touch-action: none;
-}
-
-.demo-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.55rem;
-  margin-block-start: 0.85rem;
-}
-
-.demo-controls button {
-  min-height: 2.5rem;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 0.48rem;
-  color: var(--color-ink-soft);
-  background: var(--color-surface);
-  font-size: 0.72rem;
-  font-weight: 720;
-  transition:
-    background-color 150ms cubic-bezier(0.2, 0, 0, 1),
-    border-color 150ms cubic-bezier(0.2, 0, 0, 1),
-    color 150ms cubic-bezier(0.2, 0, 0, 1);
-}
-
-.demo-controls button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.42rem;
-  padding-inline: 0.78rem;
-}
-
-@media (hover: hover) {
-  .demo-controls button:hover:not(:disabled) {
-    border-color: var(--color-ink-soft);
-    color: var(--color-ink);
-    background: var(--color-surface-muted);
-  }
-}
-
-.demo-count {
-  margin-inline-start: auto;
-  color: var(--color-ink-faint);
-  font-size: 0.7rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.demo-status {
-  min-height: 1.1rem;
-  margin: 0.75rem 0.2rem 0.1rem;
-  color: var(--color-ink-faint);
-  font-size: 0.7rem;
 }
 
 .proof-strip {
@@ -1004,8 +1042,11 @@ samp,
 }
 
 .code-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
   min-height: 1.7rem;
-  padding: 0 0.48rem;
+  padding: 0 0.5rem;
   border: 0;
   border-radius: 0.38rem;
   color: var(--color-code-muted);
@@ -1016,6 +1057,12 @@ samp,
   transition:
     color 150ms cubic-bezier(0.2, 0, 0, 1),
     background-color 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.code-tabs button .code-language-icon,
+.code-tabs button svg {
+  width: 0.82rem;
+  height: 0.82rem;
 }
 
 .code-tabs button.is-active {

@@ -1,6 +1,6 @@
 ---
-title: React
-description: A typed hook for React, Vite, Remix, and React-based app shells.
+title: React signature pad
+description: Add a SignetPad signature field to React, Next.js, Remix, Vite, or Astro with pointer events and an optional Canvas renderer.
 section: integrations
 order: 31
 ---
@@ -8,7 +8,12 @@ order: 31
 ## Install
 
 ```bash
-pnpm add @signetpad/react @signetpad/renderer-canvas
+pnpm add signetpad
+```
+
+```ts
+import { useSignaturePad } from 'signetpad/react';
+import { createCanvasRenderer } from 'signetpad/canvas';
 ```
 
 ## Connect the hook
@@ -24,12 +29,13 @@ return (
     width={600}
     height={240}
     tabIndex={0}
+    style={{ touchAction: 'none' }}
     aria-label="Signature input"
   />
 );
 ```
 
-The hook owns the controller for the lifetime of the component and keeps `snapshot` reactive. Use the controller for commands and subscribe separately when your renderer needs point-level updates.
+The hook owns the controller for the lifetime of the component and keeps `snapshot` reactive. Use the controller for commands and subscribe separately when your renderer needs point-level updates. `enabled` and `preventDefault` stay live; call `setViewport`, `setStrokeStyle`, or `setBehavior` to change capture settings after mount.
 
 ## Render with Canvas
 

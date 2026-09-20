@@ -46,17 +46,19 @@ describe('enhanceCodeBlocks', () => {
   });
 
   it('turns install commands into synced package manager tabs', () => {
-    mountPre('bash', 'pnpm add @signetpad/react');
-    mountPre('bash', 'pnpm add @signetpad/vue');
+    mountPre('bash', 'pnpm add signetpad');
+    mountPre('bash', 'pnpm add signetpad react-native-svg');
     enhanceCodeBlocks();
 
     const yarnTabs = document.querySelectorAll('[role="tab"]');
-    const firstYarn = [...yarnTabs].find((tab) => tab.textContent === 'yarn');
+    const firstYarn = [...yarnTabs].find((tab) => tab.textContent?.trim() === 'yarn');
     firstYarn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     const panels = document.querySelectorAll('[role="tabpanel"]');
-    expect(panels[0]?.textContent).toBe('yarn add @signetpad/react');
-    expect(panels[1]?.textContent).toBe('yarn add @signetpad/vue');
+    expect(panels[0]?.textContent).toBe('yarn add signetpad');
+    expect(panels[1]?.textContent).toBe('yarn add signetpad react-native-svg');
     expect(window.localStorage.getItem(PACKAGE_MANAGER_STORAGE_KEY)).toBe('yarn');
+    expect(document.querySelector('[role="tab"] svg')).toBeTruthy();
+    expect(document.querySelector('.code-meta > .code-language-icon')).toBeNull();
   });
 });

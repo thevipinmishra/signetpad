@@ -11,7 +11,7 @@ import {
   type PackageManager,
 } from '../lib/package-manager.js';
 
-const DEFAULT_PACKAGES = '@signetpad/core @signetpad/react @signetpad/renderer-canvas';
+const DEFAULT_PACKAGES = 'signetpad';
 
 export function InstallTabs({ packages = DEFAULT_PACKAGES }: { packages?: string }) {
   const [activeManager, setActiveManager] = useState<PackageManager>('pnpm');
@@ -55,7 +55,6 @@ export function InstallTabs({ packages = DEFAULT_PACKAGES }: { packages?: string
     <div className="code-block" data-code-kind="install">
       <div className="code-toolbar">
         <div className="code-meta">
-          <BrandIcon icon={packageManagerIcon(activeManager)} label={activeManager} />
           <div className="code-tabs" role="tablist" aria-label="Package manager">
             {PACKAGE_MANAGERS.map((manager, index) => {
               const isActive = manager === activeManager;
@@ -76,6 +75,7 @@ export function InstallTabs({ packages = DEFAULT_PACKAGES }: { packages?: string
                     tabRefs.current[manager] = element;
                   }}
                 >
+                  <BrandIcon icon={packageManagerIcon(manager)} decorative />
                   {manager}
                 </button>
               );
