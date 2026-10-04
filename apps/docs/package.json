@@ -16,7 +16,7 @@
     "astro": "^7.3.3",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "reicon-react": "^1.2.5",
+    "reicon-react": "^1.2.6",
     "signetpad": "workspace:*",
     "simple-icons": "^16.32.0"
   },
