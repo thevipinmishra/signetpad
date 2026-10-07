@@ -4,6 +4,6 @@ import react from '@astrojs/react';
 export default defineConfig({
   integrations: [react()],
   markdown: {
-    shikiConfig: { theme: 'github-dark' },
+    shikiConfig: { theme: 'github-dark-default' },
   },
 });

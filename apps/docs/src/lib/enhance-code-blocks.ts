@@ -132,8 +132,7 @@ function createToolbar({
   if (icon && label) {
     const language = document.createElement('span');
     language.className = 'code-language-icon';
-    language.title = label;
-    language.innerHTML = icon + '<span class="visually-hidden">' + label + '</span>';
+    language.innerHTML = icon + '<span class="code-language-label">' + label + '</span>';
     meta.append(language);
   }
 

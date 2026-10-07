@@ -2,25 +2,31 @@
 import { InteractivePad } from '../components/InteractivePad';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { ArrowRight, Code, Image, Package } from 'reicon-react';
+
+const FRAMEWORKS = [
+  { href: '/docs/react', name: 'React', detail: 'Vite, Remix, Next.js, Astro' },
+  { href: '/docs/react-native', name: 'React Native', detail: 'PanResponder and SVG' },
+  { href: '/docs/vue', name: 'Vue 3', detail: 'Vue and Nuxt' },
+  { href: '/docs/sveltekit', name: 'Svelte', detail: 'Svelte and SvelteKit' },
+  { href: '/docs/solid', name: 'Solid', detail: 'Signals and canvas' },
+  { href: '/docs/angular', name: 'Angular', detail: 'Attach helper' },
+];
 ---
 <SiteLayout
-  title="Headless signature pad for React, Vue, Svelte, and React Native"
-  description="SignetPad captures vector signatures, with undo and redo, and exports SVG or PNG. One TypeScript package for web and React Native."
+  title="Headless signature pad for React, Vue, Svelte, Solid, Angular, and React Native"
+  description="SignetPad captures vector signatures. Undo and redo strokes. Export SVG or PNG. One TypeScript package for web and React Native."
 >
   <section class="home-hero page-width">
     <div class="hero-copy">
       <h1>Headless signature pad</h1>
       <p class="hero-lede">
-        Capture vector strokes in React, Vue, Svelte, and React Native. Undo, redo, and export SVG
-        or PNG.
+        Capture vector strokes across the major UI frameworks. Undo and redo. Export SVG or PNG.
       </p>
       <div class="hero-actions">
         <a class="button button-primary" href="/docs/getting-started">
           Get started <ArrowRight aria-hidden="true" size={16} weight="Outline" />
         </a>
-        <a class="button button-secondary" href="/docs/examples">
-          Examples <ArrowRight aria-hidden="true" size={16} weight="Outline" />
-        </a>
+        <a class="button button-secondary" href="/docs/examples">Examples</a>
       </div>
       <div class="hero-trust" aria-label="Library highlights">
         <span>MIT</span>
@@ -42,7 +48,7 @@ import { ArrowRight, Code, Image, Package } from 'reicon-react';
       </div>
       <div>
         <strong>Undo and redo</strong>
-        <p>History is built into the controller.</p>
+        <p>The controller stores stroke history.</p>
       </div>
       <div>
         <strong>SVG and PNG</strong>
@@ -53,9 +59,7 @@ import { ArrowRight, Code, Image, Package } from 'reicon-react';
 
   <section class="home-section page-width" aria-labelledby="why-title">
     <div class="section-intro">
-      <div>
-        <h2 id="why-title">What you get</h2>
-      </div>
+      <h2 id="why-title">What you get</h2>
       <p>
         A drop-in field for the common case. Hooks and a headless controller when you need a custom
         surface.
@@ -76,7 +80,7 @@ import { ArrowRight, Code, Image, Package } from 'reicon-react';
           <Package size={20} weight="Outline" />
         </span>
         <h3>Frameworks</h3>
-        <p>React, Vue, Svelte, and React Native from one package.</p>
+        <p>React, Vue, Svelte, Solid, Angular, and React Native from one package.</p>
         <a href="/docs/integrations">Integrations <ArrowRight aria-hidden="true" size={15} weight="Outline" /></a>
       </article>
       <article>
@@ -90,48 +94,42 @@ import { ArrowRight, Code, Image, Package } from 'reicon-react';
     </div>
   </section>
 
-  <section class="home-section home-section-tinted" aria-labelledby="start-title">
-    <div class="page-width split-section">
-      <div>
-        <h2 id="start-title">Frameworks</h2>
+  <section class="home-section" aria-labelledby="start-title">
+    <div class="page-width">
+      <div class="section-intro">
+        <h2 id="start-title">One package, six frameworks</h2>
+        <p>
+          Adapters for the tools you already use. Import one path and the rest stays out of your
+          bundle.
+        </p>
       </div>
-      <div class="integration-list">
-        <a href="/docs/react">
-          <span>
-            <strong>React</strong>
-            <small>Vite, Remix, Next.js, Astro</small>
-          </span>
-          <ArrowRight aria-hidden="true" size={17} weight="Outline" />
-        </a>
-        <a href="/docs/react-native">
-          <span>
-            <strong>React Native</strong>
-            <small>PanResponder and SVG</small>
-          </span>
-          <ArrowRight aria-hidden="true" size={17} weight="Outline" />
-        </a>
-        <a href="/docs/vue">
-          <span>
-            <strong>Vue 3</strong>
-            <small>Vue and Nuxt</small>
-          </span>
-          <ArrowRight aria-hidden="true" size={17} weight="Outline" />
-        </a>
-        <a href="/docs/sveltekit">
-          <span>
-            <strong>Svelte</strong>
-            <small>Svelte and SvelteKit</small>
-          </span>
-          <ArrowRight aria-hidden="true" size={17} weight="Outline" />
-        </a>
+
+      <div class="integration-grid">
+        {
+          FRAMEWORKS.map((framework, index) => (
+            <a href={framework.href}>
+              <span class="integration-index" aria-hidden="true">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <ArrowRight aria-hidden="true" size={16} weight="Outline" />
+              <span class="integration-copy">
+                <strong>{framework.name}</strong>
+                <small>{framework.detail}</small>
+              </span>
+            </a>
+          ))
+        }
       </div>
     </div>
   </section>
 
-  <section class="home-section page-width closing-section">
-    <h2>Examples</h2>
-    <a class="button button-primary" href="/docs/examples">
-      View examples <ArrowRight aria-hidden="true" size={16} weight="Outline" />
-    </a>
+  <section class="closing-band" aria-labelledby="closing-title">
+    <div class="page-width closing-section">
+      <h2 id="closing-title">Examples</h2>
+      <p>Run the drop-in field, the hooks, and the export helpers in the live playgrounds.</p>
+      <a class="button button-primary" href="/docs/examples">
+        View examples <ArrowRight aria-hidden="true" size={16} weight="Outline" />
+      </a>
+    </div>
   </section>
 </SiteLayout>

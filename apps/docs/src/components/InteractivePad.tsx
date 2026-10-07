@@ -4,7 +4,7 @@ import { SignaturePad, type SignaturePadHandle } from 'signetpad/react';
 import type { SignatureSnapshot } from 'signetpad';
 
 const VIEWPORT = { width: 720, height: 240 };
-const STROKE_COLORS = ['#102935', '#b94d29', '#167769', '#2b67d1'] as const;
+const STROKE_COLORS = ['#111111', '#0b6ec5', '#f35815', '#737373'] as const;
 const EMPTY_SNAPSHOT: SignatureSnapshot = {
   revision: 0,
   isEmpty: true,

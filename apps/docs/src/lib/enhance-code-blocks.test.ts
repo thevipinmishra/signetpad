@@ -32,17 +32,14 @@ describe('enhanceCodeBlocks', () => {
     });
   });
 
-  it('shows a language icon instead of a language name', () => {
+  it('labels each block with a language icon and name', () => {
     mountPre('ts', 'const value = 1;');
     enhanceCodeBlocks();
 
-    expect(document.querySelector('.code-language')).toBeNull();
     expect(document.querySelector('.code-language-icon svg')).toBeTruthy();
+    expect(document.querySelector('.code-language-label')?.textContent).toBe('TypeScript');
     expect(document.querySelector('.code-copy')?.textContent?.trim()).toBe('');
     expect(document.querySelector('.code-copy')?.getAttribute('aria-label')).toBe('Copy code');
-    expect(document.querySelector('.code-language-icon .visually-hidden')?.textContent).toBe(
-      'TypeScript',
-    );
   });
 
   it('turns install commands into synced package manager tabs', () => {

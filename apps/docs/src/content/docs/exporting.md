@@ -61,6 +61,13 @@ JPEG and WebP use the same helper:
 padRef.current?.toDataURL({ type: 'image/webp', quality: 0.9 });
 ```
 
+Crop to ink bounds with `trim` (and optional `padding` in viewport units):
+
+```ts
+padRef.current?.toSvg({ trim: true, padding: 8, background: '#ffffff' });
+padRef.current?.toDataURL({ type: 'image/png', trim: true, padding: 8 });
+```
+
 For uploads, use a blob:
 
 ```ts
@@ -76,7 +83,7 @@ if (file) {
 
 ## SVG on a server
 
-`toSvg()` also lives on the core controller, so it works in Node without a DOM.
+`toSvg()` also lives on the core controller, so it works in Node without a DOM. React Native fields expose `toSvg()` and do not expose `toDataURL` or `toBlob`.
 
 ```ts
 import { createSignaturePad } from 'signetpad';

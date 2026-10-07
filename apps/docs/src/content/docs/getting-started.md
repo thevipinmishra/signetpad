@@ -19,7 +19,8 @@ export function SignatureField() {
 
 In Next.js, put `'use client'` at the top of that file. See [Next.js](/docs/nextjs).
 
-Other frameworks: [Vue](/docs/vue), [Svelte](/docs/sveltekit), [React Native](/docs/react-native).
+Other frameworks: [Vue](/docs/vue), [Svelte](/docs/sveltekit), [Solid](/docs/solid),
+[Angular](/docs/angular), [React Native](/docs/react-native).
 
 ## More
 

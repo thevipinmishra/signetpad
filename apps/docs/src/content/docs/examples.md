@@ -168,3 +168,17 @@ export function DualSignature() {
   );
 }
 ```
+
+## Other frameworks
+
+Live demo apps:
+
+| App                    | Stack           | Command                                        |
+| ---------------------- | --------------- | ---------------------------------------------- |
+| `apps/examples`        | React + Canvas  | `pnpm --filter @signetpad/examples dev`        |
+| `apps/examples-vue`    | Vue + Canvas    | `pnpm --filter @signetpad/examples-vue dev`    |
+| `apps/examples-svelte` | Svelte + Canvas | `pnpm --filter @signetpad/examples-svelte dev` |
+| `apps/examples-expo`   | Expo + SVG      | `pnpm --filter @signetpad/examples-expo dev`   |
+
+For Solid and Angular, copy the recipes in [Integrations](/docs/integrations). The controller API
+is the same.

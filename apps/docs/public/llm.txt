@@ -19,10 +19,13 @@ npm install signetpad
 
 | Import                       | Use |
 | ---------------------------- | --- |
-| `signetpad`                  | Controller, types, `toData()`, `toSvg()` |
+| `signetpad`                  | Controller, types, `toData()`, `toSvg()`, `assertCssColor` |
 | `signetpad/react`            | React `SignaturePad` + `useSignaturePad` |
 | `signetpad/vue`              | Vue `SignaturePad` + `useSignaturePad` |
 | `signetpad/svelte`           | `createSignaturePadAction()` |
+| `signetpad/svelte/SignaturePad.svelte` | Ready-made Svelte field |
+| `signetpad/solid`            | Solid `useSignaturePad` |
+| `signetpad/angular`          | `attachAngularSignaturePad(element)` |
 | `signetpad/react-native`     | React Native `useSignaturePad` (PanResponder) |
 | `signetpad/react-native-svg` | Native `SignaturePad` + `SignatureSvg` |
 | `signetpad/canvas`           | Canvas 2D renderer (used by web `SignaturePad`) |
@@ -100,12 +103,28 @@ In Nuxt, wrap with `<ClientOnly>`.
 </script>
 
 <canvas use:action aria-label="Signature"></canvas>
-<button type="button" disabled={!$snapshot.canUndo} on:click={() => controller.undo()}>
+<button type="button" disabled={!$snapshot.canUndo} onclick={() => controller.undo()}>
   Undo
 </button>
 ```
 
-`$snapshot` is a Svelte store.
+`$snapshot` is a Svelte store-shaped object. Or import `signetpad/svelte/SignaturePad.svelte`.
+
+## Solid
+
+```ts
+import { useSignaturePad } from 'signetpad/solid';
+import { attachCanvasRenderer } from 'signetpad/canvas';
+```
+
+## Angular
+
+```ts
+import { attachAngularSignaturePad } from 'signetpad/angular';
+
+const handle = attachAngularSignaturePad(canvasElement);
+// destroy with handle.destroy()
+```
 
 ## React Native
 
@@ -129,19 +148,19 @@ import { useSignaturePad } from 'signetpad/react-native';
 import { SignatureSvg } from 'signetpad/react-native-svg';
 
 export function SignatureField() {
-  const { controller, panHandlers } = useSignaturePad({
+  const { controller, panHandlers, onLayout } = useSignaturePad({
     viewport: { width: 360, height: 180 },
   });
 
   return (
-    <View {...panHandlers} accessible accessibilityLabel="Signature">
+    <View {...panHandlers} onLayout={onLayout} accessible accessibilityLabel="Signature">
       <SignatureSvg pad={controller} />
     </View>
   );
 }
 ```
 
-Pass `pad={controller}` so SVG updates during a stroke.
+Pass `pad={controller}` so SVG updates during a stroke. Attach `onLayout` for layout-to-viewport scaling.
 
 ## Save and restore
 
@@ -155,10 +174,12 @@ Persist `SignatureData` as JSON. Do not persist a screenshot if you need to rest
 ## Export
 
 ```ts
-const svg = padRef.current?.toSvg({ background: '#ffffff' });
-const png = padRef.current?.toDataURL({ type: 'image/png' });
+const svg = padRef.current?.toSvg({ background: '#ffffff', trim: true, padding: 8 });
+const png = padRef.current?.toDataURL({ type: 'image/png', trim: true, padding: 8 });
 const file = await padRef.current?.toBlob({ type: 'image/png' });
 ```
+
+Stroke `color` and SVG `background` must be plain CSS colors. Reject `url(...)` and markup.
 
 On a server:
 
@@ -188,7 +209,7 @@ type SignaturePadHandle = {
 };
 ```
 
-`toDataURL` and `toBlob` exist on web canvas components only.
+`toDataURL` and `toBlob` exist on web canvas components only. React Native uses `toSvg()`.
 
 ## Controller
 
@@ -196,7 +217,14 @@ type SignaturePadHandle = {
 createSignaturePad({
   viewport: { width: 600, height: 240 },
   stroke: { color: '#111827', width: 2, opacity: 1, cap: 'round', join: 'round' },
-  behavior: { minDistance: 0.5, smoothing: 0.35, allowDots: true },
+  behavior: {
+    minDistance: 0.5,
+    smoothing: 0.35,
+    allowDots: true,
+    pressureWidth: false,
+    curveFitting: false,
+  },
+  limits: { maxStrokes: 500, maxPointsPerStroke: 10_000, maxHistory: 100 },
 });
 ```
 

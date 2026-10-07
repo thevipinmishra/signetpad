@@ -56,12 +56,12 @@ import { useSignaturePad } from 'signetpad/react-native';
 import { SignatureSvg } from 'signetpad/react-native-svg';
 
 export function SignatureField() {
-  const { controller, panHandlers } = useSignaturePad({
+  const { controller, panHandlers, onLayout } = useSignaturePad({
     viewport: { width: 360, height: 180 },
   });
 
   return (
-    <View {...panHandlers} accessible accessibilityLabel="Signature">
+    <View {...panHandlers} onLayout={onLayout} accessible accessibilityLabel="Signature">
       <SignatureSvg pad={controller} />
     </View>
   );
@@ -69,3 +69,5 @@ export function SignatureField() {
 ```
 
 Pass `pad={controller}` so the SVG updates while a stroke is in progress. Passing `strokes={controller.getStrokes()}` only updates on React re-render.
+
+Attach `onLayout` so touch coordinates scale from the laid-out view size to the logical viewport. Export with `toSvg()`. The React Native handle does not expose `toDataURL` or `toBlob`.
