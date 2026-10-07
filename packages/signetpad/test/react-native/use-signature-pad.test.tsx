@@ -28,7 +28,7 @@ function Harness({
   const result = useSignaturePad({
     enabled,
     viewport: { width: 200, height: 100 },
-    behavior: { smoothing: 0 },
+    behavior: { smoothing: 0, minDistance: 0 },
   });
   useEffect(() => onReady(result), [onReady, result]);
   return null;
@@ -83,5 +83,31 @@ describe('useSignaturePad', () => {
 
     expect(responder.config!.onStartShouldSetPanResponder?.()).toBe(false);
     expect(result!.snapshot.isEmpty).toBe(true);
+  });
+
+  it('scales touch coordinates from layout size to the viewport', () => {
+    let result: UseSignaturePadResult | undefined;
+    render(
+      <Harness
+        onReady={(next) => {
+          result = next;
+        }}
+      />,
+    );
+    const handlers = responder.config!;
+
+    act(() => {
+      result!.onLayout({
+        nativeEvent: { layout: { x: 0, y: 0, width: 100, height: 50 } },
+      } as never);
+      handlers.onPanResponderGrant?.(gesture(25, 25));
+      handlers.onPanResponderMove?.(gesture(50, 25));
+      handlers.onPanResponderRelease?.();
+    });
+
+    expect(result!.controller.toData().strokes[0]?.points).toEqual([
+      { x: 50, y: 50, time: 20, pressure: 0.7, pointerType: 'touch' },
+      { x: 100, y: 50, time: 20, pressure: 0.7, pointerType: 'touch' },
+    ]);
   });
 });

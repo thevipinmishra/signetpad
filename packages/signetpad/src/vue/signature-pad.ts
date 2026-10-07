@@ -22,6 +22,14 @@ import type {
 } from '../types.js';
 import { useSignaturePad, type UseSignaturePadOptions } from './use-signature-pad.js';
 
+export interface SignaturePadProps {
+  viewport?: Viewport;
+  stroke?: Partial<StrokeStyle>;
+  behavior?: Partial<SignatureBehavior>;
+  enabled?: boolean;
+  preventDefault?: boolean;
+}
+
 export interface SignaturePadHandle {
   controller: ReturnType<typeof useSignaturePad>['controller'];
   snapshot: SignatureSnapshot;
@@ -87,6 +95,12 @@ export const SignaturePad = defineComponent({
       () => props.viewport,
       (value) => {
         if (value) controller.setViewport(value);
+      },
+    );
+    watch(
+      () => props.behavior,
+      (value) => {
+        if (value) controller.setBehavior(value);
       },
     );
     watch(snapshot, (value) => emit('snapshot', value), { immediate: true });

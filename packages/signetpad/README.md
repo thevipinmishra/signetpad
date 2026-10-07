@@ -3,9 +3,13 @@
 [![npm](https://img.shields.io/npm/v/signetpad.svg)](https://www.npmjs.com/package/signetpad)
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](./LICENSE)
 
-**SignetPad** is a headless TypeScript signature pad for React, Next.js, Vue, Nuxt, Svelte, SvelteKit, and React Native. It captures handwritten signatures as versioned vector data, supports undo and redo, and exports SVG or browser images (PNG, JPEG, WebP).
+**SignetPad** is a headless TypeScript signature pad for React, Vue, Svelte, Solid, Angular, and
+React Native. It captures handwritten signatures as versioned vector data. It supports undo and
+redo. It exports SVG or browser images (PNG, JPEG, WebP).
 
-Install one package. Import only the entry you need so unused framework code is tree-shaken away.
+Use the React adapter in Next.js. Use the Vue adapter in Nuxt. Use the Svelte action in SvelteKit.
+
+Install one package. Import only the entry you need so unused framework code stays out of the bundle.
 
 ```sh
 pnpm add signetpad
@@ -17,24 +21,28 @@ npm install signetpad
 
 ## Why SignetPad
 
-Most signature pad libraries bind capture, drawing, and export to one canvas. SignetPad keeps those jobs separate:
+Most signature pad libraries bind capture, drawing, and export to one canvas. SignetPad keeps those
+jobs separate:
 
-- Capture once with a tiny framework adapter
+- Capture once with a small framework adapter
 - Persist editable `SignatureData` instead of a screenshot
 - Render with Canvas, React Native SVG, or your own surface
 - Use the same payload on web, native, and the server
 
 ## Import paths
 
-| Import                       | Use it for                                                      |
-| ---------------------------- | --------------------------------------------------------------- |
-| `signetpad`                  | Headless controller, history, validation, `toData()`, `toSvg()` |
-| `signetpad/react`            | React `SignaturePad` plus the headless `useSignaturePad` hook   |
-| `signetpad/vue`              | Vue `SignaturePad` plus the composable                          |
-| `signetpad/svelte`           | Svelte action that paints a canvas for you                      |
-| `signetpad/react-native`     | React Native PanResponder hook                                  |
-| `signetpad/react-native-svg` | Native `SignaturePad` plus `SignatureSvg`                       |
-| `signetpad/canvas`           | Canvas 2D renderer (used internally by the web `SignaturePad`)  |
+| Import                                 | Use it for                                                               |
+| -------------------------------------- | ------------------------------------------------------------------------ |
+| `signetpad`                            | Headless controller, history, `loadData()` checks, `toData()`, `toSvg()` |
+| `signetpad/react`                      | React `SignaturePad` plus the headless `useSignaturePad` hook            |
+| `signetpad/vue`                        | Vue `SignaturePad` plus the composable                                   |
+| `signetpad/svelte`                     | Svelte action that paints a canvas for you                               |
+| `signetpad/svelte/SignaturePad.svelte` | Ready-made Svelte field                                                  |
+| `signetpad/solid`                      | Solid `useSignaturePad` hook                                             |
+| `signetpad/angular`                    | Angular canvas attach helper                                             |
+| `signetpad/react-native`               | React Native PanResponder hook                                           |
+| `signetpad/react-native-svg`           | Native `SignaturePad` plus `SignatureSvg`                                |
+| `signetpad/canvas`                     | Canvas 2D renderer (used internally by the web `SignaturePad`)           |
 
 `sideEffects` is `false`. Importing `signetpad/react` does not load Vue, Svelte, or React Native.
 
@@ -84,6 +92,8 @@ import { SignaturePad } from 'signetpad/vue';
 
 ## Svelte signature pad
 
+Action:
+
 ```svelte
 <script lang="ts">
   import { createSignaturePadAction } from 'signetpad/svelte';
@@ -92,9 +102,40 @@ import { SignaturePad } from 'signetpad/vue';
 </script>
 
 <canvas use:action aria-label="Agreement signature"></canvas>
-<button type="button" disabled={!$snapshot.canUndo} on:click={() => controller.undo()}>
+<button type="button" disabled={!$snapshot.canUndo} onclick={() => controller.undo()}>
   Undo
 </button>
+```
+
+Component:
+
+```svelte
+<script lang="ts">
+  import SignaturePad from 'signetpad/svelte/SignaturePad.svelte';
+</script>
+
+<SignaturePad aria-label="Agreement signature" />
+```
+
+## Solid
+
+```ts
+import { useSignaturePad } from 'signetpad/solid';
+import { attachCanvasRenderer } from 'signetpad/canvas';
+
+const { controller, surfaceProps, setSurface } = useSignaturePad();
+// Attach surfaceProps to a canvas, then call attachCanvasRenderer(canvas, controller).
+```
+
+## Angular
+
+```ts
+import { attachAngularSignaturePad } from 'signetpad/angular';
+
+const handle = attachAngularSignaturePad(canvasElement, {
+  viewport: { width: 600, height: 240 },
+});
+// Call handle.destroy() in ngOnDestroy.
 ```
 
 ## React Native signature pad
@@ -107,7 +148,11 @@ export function SignatureField() {
 }
 ```
 
-`react`, `vue`, `react-native`, and `react-native-svg` are optional peer dependencies. Install only the ones your app already uses.
+`react`, `vue`, `solid-js`, `react-native`, and `react-native-svg` are optional peer dependencies.
+Install only the ones your app already uses.
+
+React Native handles expose `toSvg()`. They do not expose `toDataURL` or `toBlob`. Use `toSvg()` for
+portable images.
 
 ## Save, restore, and export
 
@@ -129,11 +174,14 @@ export function SignatureField() {
 }
 ```
 
-Keep `toData()` as the source of truth. Use `toSvg()` when you need a portable image without a browser encoder.
+Keep `toData()` as the source of truth. Use `toSvg()` when you need a portable image without a
+browser encoder.
 
 ## Tree shaking
 
-Each import path is a separate ESM entry. The core does not import React, Vue, or React Native. Renderers import types only, so a Canvas-only bundle does not include the controller unless you import `signetpad` yourself.
+Each import path is a separate ESM entry. The core does not import React, Vue, or React Native.
+Renderers import types only, so a Canvas-only bundle does not include the controller unless you
+import `signetpad` yourself.
 
 ```ts
 import { createSignaturePad } from 'signetpad';
@@ -149,6 +197,8 @@ Do not import from a barrel of every adapter. There is no `signetpad/all` on pur
 - [React](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/react.md)
 - [Vue](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/vue.md)
 - [Svelte](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/sveltekit.md)
+- [Solid](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/solid.md)
+- [Angular](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/angular.md)
 - [React Native](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/react-native.md)
 - [API](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/src/content/docs/api.md)
 - [llm.txt](https://github.com/thevipinmishra/signetpad/blob/main/apps/docs/public/llm.txt)

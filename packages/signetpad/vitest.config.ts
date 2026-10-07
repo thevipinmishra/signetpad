@@ -15,6 +15,9 @@ export default defineConfig({
         },
       },
       {
+        resolve: {
+          conditions: ['browser', 'development', 'default'],
+        },
         test: {
           name: 'dom',
           environment: 'jsdom',
@@ -22,8 +25,11 @@ export default defineConfig({
             'test/react/**/*.test.tsx',
             'test/vue/**/*.test.ts',
             'test/svelte/**/*.test.ts',
+            'test/solid/**/*.test.ts',
+            'test/angular/**/*.test.ts',
             'test/react-native/**/*.test.tsx',
             'test/react-native-svg/**/*.test.ts',
+            'test/react-native-svg/**/*.test.tsx',
           ],
         },
       },

@@ -1,9 +1,24 @@
 # Changelog
 
-All notable changes to SignetPad are documented here.
+This file lists notable changes to SignetPad.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
-adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project follows
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## Unreleased
+
+### Added
+
+- `signetpad/solid` hook and `signetpad/angular` canvas attach helper
+- Svelte `SignaturePad.svelte` component export
+- Optional `pressureWidth` and `curveFitting` behavior flags
+- Payload `limits` for strokes, points, and undo history
+- Public `assertCssColor` helper
+
+### Changed
+
+- Named CSS colors use a small closed allowlist
+- Canvas renderer validates stroke colors before paint
 
 ## [0.1.0] - 2026-09-20
 

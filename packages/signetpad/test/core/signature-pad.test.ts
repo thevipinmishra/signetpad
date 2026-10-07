@@ -205,16 +205,34 @@ describe('createSignaturePad', () => {
     ).toThrow('Every stroke must have an id');
   });
 
-  it('escapes SVG attributes and can keep history when loading data', () => {
+  it('rejects unsafe stroke colors and SVG backgrounds', () => {
+    expect(() => createSignaturePad({ stroke: { color: 'red"><script>' } })).toThrow(
+      'plain CSS color',
+    );
+    expect(() => createSignaturePad({ stroke: { color: 'url(#x)' } })).toThrow('plain CSS color');
+    expect(() =>
+      createSignaturePad({ stroke: { color: '#111827' } }).toSvg({
+        background: 'white"><img',
+      }),
+    ).toThrow('plain CSS color');
+
     const pad = createSignaturePad({
       viewport: { width: 40, height: 20 },
-      stroke: { color: 'red"><script>', width: 2 },
+      stroke: { color: '#ff0000', width: 2 },
     });
     pad.begin({ x: 1, y: 2 });
     pad.end();
+    expect(pad.toSvg({ background: '#ffffff' })).toContain('fill="#ffffff"');
+    expect(pad.toSvg()).toContain('fill="#ff0000"');
+  });
 
-    expect(pad.toSvg({ background: 'white"><img' })).toContain('fill="white&quot;&gt;&lt;img"');
-    expect(pad.toSvg()).toContain('fill="red&quot;&gt;&lt;script&gt;"');
+  it('can keep history when loading data', () => {
+    const pad = createSignaturePad({
+      viewport: { width: 40, height: 20 },
+      stroke: { color: '#ff0000', width: 2 },
+    });
+    pad.begin({ x: 1, y: 2 });
+    pad.end();
 
     pad.loadData(
       {
@@ -235,6 +253,22 @@ describe('createSignaturePad', () => {
       strokes: [],
     });
     expect(replaced.getSnapshot().canUndo).toBe(false);
+  });
+
+  it('trims SVG export to ink bounds', () => {
+    const pad = createSignaturePad({
+      viewport: { width: 200, height: 100 },
+      stroke: { color: '#111827', width: 2 },
+      behavior: { smoothing: 0, minDistance: 0 },
+    });
+    pad.begin({ x: 50, y: 40 });
+    pad.move({ x: 80, y: 40 });
+    pad.end();
+
+    const svg = pad.toSvg({ trim: true, padding: 4 });
+    expect(svg).toContain('viewBox="0 0 40 10"');
+    expect(svg).toContain('width="40"');
+    expect(svg).toContain('height="10"');
   });
 
   it('updates viewport, style, and behavior after creation', () => {
@@ -260,5 +294,64 @@ describe('createSignaturePad', () => {
     pad.setStrokeStyle({ color: '#ff0000', width: 5 });
     pad.setBehavior({ minDistance: 0, smoothing: 0, allowDots: true });
     expect(pad.getSnapshot().revision).toBe(revision);
+  });
+
+  it('enforces stroke and point limits', () => {
+    const pad = createSignaturePad({
+      limits: { maxStrokes: 1, maxPointsPerStroke: 2, maxHistory: 2 },
+      behavior: { minDistance: 0, smoothing: 0 },
+    });
+    pad.begin({ x: 0, y: 0 });
+    pad.move({ x: 10, y: 0 });
+    expect(() => pad.move({ x: 20, y: 0 })).toThrow('maxPointsPerStroke');
+    pad.end();
+    expect(() => pad.begin({ x: 1, y: 1 })).toThrow('maxStrokes');
+  });
+
+  it('rejects oversized loadData payloads', () => {
+    const pad = createSignaturePad({ limits: { maxStrokes: 1 } });
+    expect(() =>
+      pad.loadData({
+        version: 1,
+        viewport: { width: 10, height: 10 },
+        strokes: [
+          {
+            id: 'a',
+            points: [{ x: 1, y: 1, time: 1 }],
+            style: { color: 'black', width: 1, opacity: 1, cap: 'round', join: 'round' },
+          },
+          {
+            id: 'b',
+            points: [{ x: 2, y: 2, time: 2 }],
+            style: { color: 'black', width: 1, opacity: 1, cap: 'round', join: 'round' },
+          },
+        ],
+      }),
+    ).toThrow('maxStrokes');
+  });
+
+  it('writes trimmed stroke colors back into style', () => {
+    const pad = createSignaturePad();
+    pad.setStrokeStyle({ color: '  #00ff00  ' });
+    pad.begin({ x: 1, y: 1 });
+    pad.end();
+    expect(pad.toData().strokes[0]?.style.color).toBe('#00ff00');
+  });
+
+  it('exports curved and pressure-aware SVG when enabled', () => {
+    const pad = createSignaturePad({
+      viewport: { width: 100, height: 50 },
+      behavior: { minDistance: 0, smoothing: 0, curveFitting: true, pressureWidth: true },
+      stroke: { color: '#111827', width: 4 },
+    });
+    pad.begin({ x: 0, y: 0, pressure: 0.2 });
+    pad.move({ x: 10, y: 0, pressure: 1 });
+    pad.move({ x: 20, y: 10, pressure: 0.5 });
+    pad.end();
+
+    const svg = pad.toSvg();
+    expect(svg).toContain('stroke-width="');
+    expect(svg.match(/<path /g)?.length).toBeGreaterThan(1);
+    expect(pad.getBehavior()).toMatchObject({ curveFitting: true, pressureWidth: true });
   });
 });

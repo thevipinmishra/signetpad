@@ -1,3 +1,6 @@
+import { assertCssColor } from './color.js';
+import { trimSignatureData } from './geometry.js';
+import { averagePressure, needsSegmentedStroke, pointsToPathD, strokeWidthAt } from './paths.js';
 import type { SignatureData, SignatureStroke, SignatureSvgOptions } from './types.js';
 
 function assertDimension(value: number, name: string): void {
@@ -24,9 +27,7 @@ function pointValue(value: number): string {
 function validateStrokeStyle(stroke: SignatureStroke): void {
   const { style } = stroke;
 
-  if (typeof style.color !== 'string' || !style.color) {
-    throw new TypeError('stroke.color cannot be empty');
-  }
+  assertCssColor(style.color, 'stroke.color');
   assertDimension(style.width, 'stroke.width');
   if (!Number.isFinite(style.opacity)) {
     throw new TypeError('stroke.opacity must be a finite number');
@@ -42,26 +43,39 @@ function validateStrokeStyle(stroke: SignatureStroke): void {
   }
 }
 
-function strokeToSvg(stroke: SignatureStroke): string {
+function strokeToSvg(
+  stroke: SignatureStroke,
+  pressureWidth: boolean,
+  curveFitting: boolean,
+): string {
   const [firstPoint] = stroke.points;
   if (!firstPoint) return '';
 
   validateStrokeStyle(stroke);
 
-  const color = escapeAttribute(stroke.style.color);
+  const color = escapeAttribute(assertCssColor(stroke.style.color, 'stroke.color'));
   const opacity = pointValue(stroke.style.opacity);
-  const width = pointValue(stroke.style.width);
 
   if (stroke.points.length === 1) {
-    return `<circle cx="${pointValue(firstPoint.x)}" cy="${pointValue(firstPoint.y)}" r="${pointValue(stroke.style.width / 2)}" fill="${color}" fill-opacity="${opacity}"/>`;
+    const radius = strokeWidthAt(stroke.style.width, firstPoint.pressure, pressureWidth) / 2;
+    return `<circle cx="${pointValue(firstPoint.x)}" cy="${pointValue(firstPoint.y)}" r="${pointValue(radius)}" fill="${color}" fill-opacity="${opacity}"/>`;
   }
 
-  const path = stroke.points
-    .map(
-      (point, index) => `${index === 0 ? 'M' : 'L'} ${pointValue(point.x)} ${pointValue(point.y)}`,
-    )
-    .join(' ');
+  if (needsSegmentedStroke(stroke, pressureWidth)) {
+    const segments: string[] = [];
+    for (let index = 1; index < stroke.points.length; index += 1) {
+      const from = stroke.points[index - 1]!;
+      const to = stroke.points[index]!;
+      const width = strokeWidthAt(stroke.style.width, averagePressure(from, to), pressureWidth);
+      segments.push(
+        `<path d="M ${pointValue(from.x)} ${pointValue(from.y)} L ${pointValue(to.x)} ${pointValue(to.y)}" fill="none" stroke="${color}" stroke-width="${pointValue(width)}" stroke-linecap="${stroke.style.cap}" stroke-linejoin="${stroke.style.join}" stroke-opacity="${opacity}"/>`,
+      );
+    }
+    return segments.join('');
+  }
 
+  const path = pointsToPathD(stroke.points, curveFitting);
+  const width = pointValue(stroke.style.width);
   return `<path d="${path}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="${stroke.style.cap}" stroke-linejoin="${stroke.style.join}" stroke-opacity="${opacity}"/>`;
 }
 
@@ -72,19 +86,33 @@ export function toSvg(data: SignatureData, options: SignatureSvgOptions = {}): s
   assertDimension(data.viewport.width, 'viewport.width');
   assertDimension(data.viewport.height, 'viewport.height');
 
-  const width = options.width ?? data.viewport.width;
-  const height = options.height ?? data.viewport.height;
+  const padding = options.padding ?? 0;
+  if (!Number.isFinite(padding)) {
+    throw new TypeError('options.padding must be a finite number');
+  }
+  if (padding < 0) {
+    throw new RangeError('options.padding cannot be negative');
+  }
+
+  const pressureWidth = options.pressureWidth === true;
+  const curveFitting = options.curveFitting === true;
+  const source = options.trim ? trimSignatureData(data, { padding }) : data;
+
+  const width = options.width ?? source.viewport.width;
+  const height = options.height ?? source.viewport.height;
   assertDimension(width, 'options.width');
   assertDimension(height, 'options.height');
 
-  if (options.background !== undefined && typeof options.background !== 'string') {
-    throw new TypeError('options.background must be a string');
+  if (options.background !== undefined) {
+    assertCssColor(options.background, 'options.background');
   }
 
   const background = options.background
     ? `<rect width="100%" height="100%" fill="${escapeAttribute(options.background)}"/>`
     : '';
-  const strokes = data.strokes.map(strokeToSvg).join('');
+  const strokes = source.strokes
+    .map((stroke) => strokeToSvg(stroke, pressureWidth, curveFitting))
+    .join('');
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${data.viewport.width} ${data.viewport.height}">${background}${strokes}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${source.viewport.width} ${source.viewport.height}">${background}${strokes}</svg>`;
 }

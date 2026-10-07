@@ -1,4 +1,4 @@
-export { SignaturePad, type SignaturePadHandle } from './signature-pad.js';
+export { SignaturePad, type SignaturePadHandle, type SignaturePadProps } from './signature-pad.js';
 export {
   useSignaturePad,
   type SignatureSurfaceProps,

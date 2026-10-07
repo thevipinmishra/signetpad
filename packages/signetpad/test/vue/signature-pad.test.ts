@@ -1,4 +1,4 @@
-import { createApp, h, ref } from 'vue';
+import { createApp, h, nextTick, ref } from 'vue';
 import { describe, expect, it, vi } from 'vitest';
 import { SignaturePad, type SignaturePadHandle } from '../../src/vue/index.js';
 
@@ -47,5 +47,39 @@ describe('Vue SignaturePad', () => {
     app.unmount();
     host.remove();
     vi.clearAllMocks();
+  });
+
+  it('applies live behavior updates to the next stroke', async () => {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const pad = ref<SignaturePadHandle | null>(null);
+    const allowDots = ref(true);
+
+    const app = createApp({
+      setup() {
+        return () =>
+          h(SignaturePad, {
+            ref: pad,
+            behavior: { smoothing: 0, minDistance: 0, allowDots: allowDots.value },
+          });
+      },
+    });
+
+    app.mount(host);
+    await Promise.resolve();
+
+    pad.value?.controller.begin({ x: 0, y: 0 });
+    pad.value?.controller.end();
+    expect(pad.value?.snapshot.strokeCount).toBe(1);
+
+    allowDots.value = false;
+    await nextTick();
+
+    pad.value?.controller.begin({ x: 5, y: 5 });
+    pad.value?.controller.end();
+    expect(pad.value?.snapshot.strokeCount).toBe(1);
+
+    app.unmount();
+    host.remove();
   });
 });

@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, type ComponentProps } from 'react';
-import { View, type ViewProps } from 'react-native';
+import { View, type LayoutChangeEvent, type ViewProps } from 'react-native';
 import { useSignaturePad } from '../react-native/index.js';
 import type {
   SignatureBehavior,
@@ -43,11 +43,12 @@ export const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>(fu
     accessibilityLabel = 'Signature',
     style,
     svgProps,
+    onLayout: userOnLayout,
     ...viewProps
   },
   ref,
 ) {
-  const { controller, snapshot, panHandlers } = useSignaturePad({
+  const { controller, snapshot, panHandlers, onLayout } = useSignaturePad({
     enabled,
     ...(viewport ? { viewport } : {}),
     ...(stroke ? { stroke } : {}),
@@ -64,6 +65,17 @@ export const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>(fu
   useEffect(() => {
     if (viewport) controller.setViewport(viewport);
   }, [controller, viewport?.width, viewport?.height]);
+
+  useEffect(() => {
+    if (behavior) controller.setBehavior(behavior);
+  }, [
+    controller,
+    behavior?.minDistance,
+    behavior?.smoothing,
+    behavior?.allowDots,
+    behavior?.pressureWidth,
+    behavior?.curveFitting,
+  ]);
 
   useEffect(() => {
     onSnapshotRef.current?.(snapshot);
@@ -87,10 +99,16 @@ export const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>(fu
     [controller],
   );
 
+  const handleLayout = (event: LayoutChangeEvent) => {
+    onLayout(event);
+    userOnLayout?.(event);
+  };
+
   return (
     <View
       {...viewProps}
       {...panHandlers}
+      onLayout={handleLayout}
       accessible
       accessibilityLabel={accessibilityLabel}
       style={[{ width: resolvedViewport.width, height: resolvedViewport.height }, style]}

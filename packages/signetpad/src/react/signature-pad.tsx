@@ -97,6 +97,17 @@ export const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>(fu
   }, [controller, viewport?.width, viewport?.height]);
 
   useEffect(() => {
+    if (behavior) controller.setBehavior(behavior);
+  }, [
+    controller,
+    behavior?.minDistance,
+    behavior?.smoothing,
+    behavior?.allowDots,
+    behavior?.pressureWidth,
+    behavior?.curveFitting,
+  ]);
+
+  useEffect(() => {
     onSnapshotRef.current?.(snapshot);
   }, [snapshot]);
 

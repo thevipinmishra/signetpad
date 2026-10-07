@@ -20,6 +20,12 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "pnpm format:check && pnpm typecheck && pnpm test && pnpm build",
+    "docs": "pnpm --filter @signetpad/docs dev",
+    "docs:build": "pnpm --filter @signetpad/docs build",
+    "examples": "pnpm --filter @signetpad/examples dev",
+    "examples:vue": "pnpm --filter @signetpad/examples-vue dev",
+    "examples:svelte": "pnpm --filter @signetpad/examples-svelte dev",
+    "examples:expo": "pnpm --filter @signetpad/examples-expo dev",
     "release": "pnpm build && changeset publish",
     "publish": "pnpm --filter signetpad build && pnpm --filter signetpad publish --access public",
     "changeset": "changeset"

@@ -1,7 +1,7 @@
 {
   "name": "signetpad",
   "version": "0.1.0",
-  "description": "SignetPad is a headless TypeScript signature pad for React, Vue, Svelte, and React Native. Capture vector signatures, undo strokes, and export SVG, PNG, JPEG, or WebP.",
+  "description": "SignetPad is a headless TypeScript signature pad for React, Vue, Svelte, Solid, Angular, and React Native. Capture vector signatures, undo strokes, and export SVG, PNG, JPEG, or WebP.",
   "author": {
     "name": "Vipin Mishra",
     "email": "thevipinmishra@gmail.com",
@@ -30,6 +30,8 @@
     "react signature pad",
     "vue signature pad",
     "svelte signature pad",
+    "solid signature pad",
+    "angular signature pad",
     "react native signature",
     "nextjs",
     "nuxt",
@@ -71,8 +73,23 @@
     },
     "./svelte": {
       "types": "./dist/svelte/index.d.ts",
+      "svelte": "./dist/svelte/index.js",
       "import": "./dist/svelte/index.js",
       "default": "./dist/svelte/index.js"
+    },
+    "./svelte/SignaturePad.svelte": {
+      "svelte": "./dist/svelte/SignaturePad.svelte",
+      "default": "./dist/svelte/SignaturePad.svelte"
+    },
+    "./solid": {
+      "types": "./dist/solid/index.d.ts",
+      "import": "./dist/solid/index.js",
+      "default": "./dist/solid/index.js"
+    },
+    "./angular": {
+      "types": "./dist/angular/index.d.ts",
+      "import": "./dist/angular/index.js",
+      "default": "./dist/angular/index.js"
     },
     "./react-native": {
       "types": "./dist/react-native/index.d.ts",
@@ -97,6 +114,7 @@
     "react": ">=18.0.0",
     "react-native": ">=0.72.0",
     "react-native-svg": ">=14.0.0",
+    "solid-js": ">=1.8.0",
     "vue": ">=3.3.0"
   },
   "peerDependenciesMeta": {
@@ -107,6 +125,9 @@
       "optional": true
     },
     "react-native-svg": {
+      "optional": true
+    },
+    "solid-js": {
       "optional": true
     },
     "vue": {
@@ -121,10 +142,11 @@
     "react-dom": "^19.3.0",
     "react-native": "^0.87.1",
     "react-native-svg": "^15.15.5",
+    "solid-js": "^1.9.11",
     "vue": "^3.5.43"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && node ./scripts/copy-svelte.mjs",
     "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"

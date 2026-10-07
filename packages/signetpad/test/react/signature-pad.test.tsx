@@ -63,4 +63,27 @@ describe('SignaturePad', () => {
     render(<SignaturePad onSnapshot={(snapshot) => snapshots.push(snapshot.strokeCount)} />);
     expect(snapshots[0]).toBe(0);
   });
+
+  it('applies live behavior updates to the next stroke', () => {
+    const padRef = createRef<SignaturePadHandle>();
+    const { rerender } = render(
+      <SignaturePad ref={padRef} behavior={{ smoothing: 0, minDistance: 0, allowDots: true }} />,
+    );
+
+    act(() => {
+      padRef.current?.controller.begin({ x: 0, y: 0 });
+      padRef.current?.controller.end();
+    });
+    expect(padRef.current?.snapshot.strokeCount).toBe(1);
+
+    rerender(
+      <SignaturePad ref={padRef} behavior={{ smoothing: 0, minDistance: 0, allowDots: false }} />,
+    );
+
+    act(() => {
+      padRef.current?.controller.begin({ x: 5, y: 5 });
+      padRef.current?.controller.end();
+    });
+    expect(padRef.current?.snapshot.strokeCount).toBe(1);
+  });
 });

@@ -54,6 +54,7 @@ function toInputPoint(event: PointerEvent, node: HTMLElement, pad: SignaturePad)
 /**
  * Creates a Svelte action, a snapshot store, and the same controller used by React and Vue.
  * Attach it with `use:action`. Canvas nodes are painted automatically.
+ * For a ready-made field, import `signetpad/svelte/SignaturePad.svelte`.
  */
 export function createSignaturePadAction(options: SignaturePadActionOptions = {}): {
   controller: SignaturePad;

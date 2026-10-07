@@ -4,20 +4,25 @@ Thanks for helping keep SignetPad small, typed, and portable.
 
 ## Local setup
 
-This is a pnpm + Turborepo workspace. Node.js 18.17+ is required.
+This is a pnpm + Turborepo workspace. The project requires Node.js 18.17+.
 
 ```sh
 pnpm install
+pnpm build
 pnpm check
 ```
 
 `pnpm check` runs format, typecheck, tests, and the package builds.
+Build the library once (`pnpm build` or `pnpm --filter signetpad build`) before running apps that import `signetpad`.
 
 Useful app commands:
 
 ```sh
-pnpm --filter @signetpad/docs dev
-pnpm --filter @signetpad/examples dev
+pnpm docs
+pnpm examples
+pnpm examples:vue
+pnpm examples:svelte
+pnpm examples:expo
 ```
 
 ## How the package fits together
@@ -25,8 +30,10 @@ pnpm --filter @signetpad/examples dev
 `packages/signetpad` is the only published package. Dedicated import paths keep unused code out of
 app bundles:
 
-1. `signetpad` owns stroke state, history, validation, and serialization.
-2. `signetpad/react`, `signetpad/vue`, `signetpad/svelte`, and `signetpad/react-native` translate host input into `begin` / `move` / `end`. Ready-made `SignaturePad` components (and the Svelte canvas action) also paint for you.
+1. `signetpad` owns stroke state, history, `loadData()` checks, and serialization.
+2. Framework entries translate host input into `begin` / `move` / `end`.
+   That includes React, Vue, Svelte, Solid, Angular, and React Native.
+   Ready-made `SignaturePad` components and the Svelte canvas action also paint for you.
 3. `signetpad/canvas` and `signetpad/react-native-svg` draw `SignatureStroke[]` when you bring your own surface.
 
 Keep new features on the smallest entry that can own them. Do not add a Next.js or Nuxt
@@ -44,7 +51,7 @@ import path unless the base React or Vue adapter cannot express the integration.
   pnpm changeset
   ```
 
-Internal apps (`@signetpad/docs`, `@signetpad/examples`) do not need a changeset.
+Internal apps (`@signetpad/docs`, `@signetpad/examples*`) do not need a changeset.
 
 ## Code style
 

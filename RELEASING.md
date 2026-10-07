@@ -26,4 +26,4 @@ That builds `packages/signetpad` and publishes it to npm.
    git push --follow-tags
    ```
 
-Do not publish `@signetpad/docs` or `@signetpad/examples`. They are private workspace apps.
+Do not publish `@signetpad/docs` or the `@signetpad/examples*` apps. They are private workspace apps.

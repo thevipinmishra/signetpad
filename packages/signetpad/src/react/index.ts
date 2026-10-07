@@ -1,3 +1,5 @@
+'use client';
+
 export { SignaturePad, type SignaturePadHandle, type SignaturePadProps } from './signature-pad.js';
 export {
   useSignaturePad,

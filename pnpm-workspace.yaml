@@ -5,3 +5,9 @@ allowBuilds:
   esbuild: true
 minimumReleaseAgeExclude:
   - simple-icons@16.32.0
+overrides:
+  react: 19.3.0
+peerDependencyRules:
+  allowAny:
+    - react
+    - react-dom
