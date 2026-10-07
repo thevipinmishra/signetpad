@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "SignetPad Expo",
+    "slug": "signetpad-examples-expo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#f7f6f2"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.signetpad.examples"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#f7f6f2"
+      },
+      "package": "com.signetpad.examples"
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
