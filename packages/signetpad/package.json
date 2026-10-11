@@ -142,7 +142,7 @@
     "react-dom": "^19.3.0",
     "react-native": "^0.87.1",
     "react-native-svg": "^15.15.5",
-    "solid-js": "^1.9.11",
+    "solid-js": "^1.9.17",
     "vue": "^3.5.43"
   },
   "scripts": {
