@@ -16,7 +16,7 @@
     "react-dom": "^19.3.0",
     "reicon-react": "^1.2.6",
     "signetpad": "workspace:*",
-    "simple-icons": "^16.33.0"
+    "simple-icons": "^16.34.0"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",
